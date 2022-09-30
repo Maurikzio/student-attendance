@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { auth } from "../../firebase/firebaseConfig";
+import { auth, db } from "../../firebase/firebaseConfig";
+import { doc, getDoc } from "firebase/firestore";
 
 // const userToken = localStorage.getItem("userToken")
 //   ? localStorage.getItem("userToken")
@@ -50,6 +51,19 @@ export const logoutUser = createAsyncThunk(
   }
 )
 
+export const getUserInfo = createAsyncThunk(
+  'user/getUserInfo',
+  async (_, { getState }) => {
+    const { user } = getState();
+    try {
+      const docRef = doc(db, "users", user.userId);
+      const docSnap = await getDoc(docRef);
+      return docSnap.data();
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+)
 
 export const userSlice = createSlice({
   name: "user",
@@ -89,6 +103,19 @@ export const userSlice = createSlice({
         state.loading = false;
         state.error = action.payload
       })
+      .addCase(getUserInfo.pending, (state, action) => {
+        state.loading = true;
+        state.error = null
+      })
+      .addCase(getUserInfo.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.userInfo = action.payload;
+      })
+      .addCase(getUserInfo.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload
+      })
   }
   // extraReducers: {
   //   [loginUser.pending]: (state) => {
@@ -110,6 +137,6 @@ export const userSlice = createSlice({
 
 export const { setUserInfo } = userSlice.actions;
 
-export const selectIsLoggedIn = (state) => state.user.isLoggedIn;
+export const selectUserInfo = (state) => state.user.userInfo;
 
 export default userSlice.reducer;

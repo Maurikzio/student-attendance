@@ -2,6 +2,7 @@
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 import useIsAuthenticated from "../hooks/useIsAuthenticated";
+import Layout from "./Layout";
 // import { useAuth } from "../context/auth.context";
 
 const ProtectedRoute = ({ children}) => {
@@ -14,7 +15,13 @@ const ProtectedRoute = ({ children}) => {
 
   if (!currUser.userId && !currUser.userToken) return <Navigate to="/login" />
 
-  return <>{children}</>
+  return (
+    <>
+      <Layout>
+        {children}
+      </Layout>
+    </>
+  )
 
 }
 

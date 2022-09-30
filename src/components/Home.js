@@ -1,19 +1,9 @@
-import React from 'react';
-import { auth } from "../firebase/firebaseConfig";
-// import { signOut } from "firebase/auth";
-import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { logoutUser } from '../store/user/userSlice';
-// import { useAuth } from '../context/auth.context';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectUserInfo, getUserInfo } from '../store/user/userSlice';
 
 const Home = () => {
-  // const { user, logout, loading } = useAuth();
-  // const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  const handleLogOut = () => {
-    dispatch(logoutUser());
-  }
 
   // if(loading) {
   //   return (
@@ -21,11 +11,13 @@ const Home = () => {
   //   )
   // }
 
+  useEffect(() => {
+    dispatch(getUserInfo());
+  }, [])
+
   return (
-    <div className='w-full max-w-xs m-auto text-black'>
-      {/* Home, {user.email} */}
-      <br/>
-      <button onClick={handleLogOut}>LogOut</button>
+    <div className='w-full h-full text-black'>
+      <h1>Home</h1>
     </div>
   );
 }
