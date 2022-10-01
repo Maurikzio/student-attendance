@@ -2,13 +2,14 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Routes, Route } from "react-router-dom";
-import Home from "./components/Home";
+import Home from "./pages/Home";
 import Login from "./components/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Register from "./components/Register";
 import { auth } from "./firebase/firebaseConfig";
 import { logoutUser } from "./store/user/userSlice";
 import Students from "./pages/Students";
+import NotFound from "./components/NotFound";
 
 export default function App() {
   const { userId, userToken } = useSelector((state) => state.user);
@@ -36,6 +37,7 @@ export default function App() {
   return (
     <div className="bg-slate-200 h-screen text-black flex">
         <Routes>
+          <Route path='*' element={<NotFound/>} />
           <Route path="/" element={
             <ProtectedRoute>
               <Home/>
