@@ -5,6 +5,7 @@ import { getSubjects, selectSubjects } from '../store/subjects/subjectsSlice';
 import { selectUserInfo, getUserInfo } from '../store/user/userSlice';
 import { collection, addDoc } from "firebase/firestore";
 import { db } from '../firebase/firebaseConfig';
+import { getAbsencesAddedByUser } from '../store/absences/absencesSlice';
 
 const Home = () => {
   const userInfo = useSelector(selectUserInfo);
@@ -36,6 +37,12 @@ const Home = () => {
   //   const { target: { name, value}} = event;
   //   setStudent({...student, [name]: value});
   // }
+
+  useEffect(() => {
+    if (userInfo) {
+      dispatch(getAbsencesAddedByUser(userInfo.tutorOf))
+    }
+  }, [userInfo, dispatch])
 
 
   return (

@@ -6,11 +6,18 @@ import { selectUserInfo } from '../store/user/userSlice';
 import { getSubjects } from '../store/subjects/subjectsSlice';
 import { getUserStudents } from '../store/students/studentsSlice';
 import OptionsPicker from '../components/OptionsPicker';
+import { createAbsenceRecord } from '../store/absences/absencesSlice';
 
 
 const NewRecord = () => {
-  const [isChecked, setIsChecked] = useState(true);
-  const userInfo = useSelector(selectUserInfo);
+  const [student, setStudent] = useState(null);
+  const [subject, setSubject] = useState(null);
+  const [dayOfWeek, setDayOfWeek] = useState(null);
+  const [classTime, setClassTime] = useState(null);
+  const [isUnjustified, setIsUnjustified] = useState(true);
+  const [reason, setReason] = useState("");
+
+  const { userId, userInfo } = useSelector((state) => state.user);
   const { loading: loadingSubjects, list: subjectsList } = useSelector((state) => state.subjects);
   const { loading: loadingStudents, list: studentsList } = useSelector((state) => state.students);
   const dispatch = useDispatch();
@@ -39,6 +46,21 @@ const NewRecord = () => {
     {id: "CT7", value: 7},
   ]
 
+  const handleOnClick = () => {
+    const data = {
+      student,
+      subject,
+      dayOfWeek,
+      classTime,
+      isUnjustified,
+      reason,
+      userId,
+      userInfo,
+    };
+
+    dispatch(createAbsenceRecord(data))
+  }
+
   useEffect(() => {
     dispatch(getSubjects());
   }, [])
@@ -47,7 +69,7 @@ const NewRecord = () => {
     if(userInfo) {
       dispatch(getUserStudents(userInfo.tutorOf));
     }
-  }, [userInfo, dispatch])
+  }, [userInfo, dispatch]);
 
   if(loadingSubjects || loadingStudents) {
     return (
@@ -62,22 +84,22 @@ const NewRecord = () => {
       <div className='bg-white rounded-md p-4 grid grid-cols-2 gap-5'>
         <h1 className="text-3xl font-bold tracking-tight text-gray-900 col-span-2 text-center">Registrar Falta</h1>
         <div>
-          <Select options={mappedStudents} label="Estudiante"/>
+          <Select options={mappedStudents} label="Estudiante" onChange={(value) => setStudent(value)}/>
         </div>
         <div>
-          <Select options={mappedSubjects} label="Materia"/>
+          <Select options={mappedSubjects} label="Materia" onChange={(value) => setSubject(value)}/>
         </div>
         <div>
-          <OptionsPicker options={daysOfTheWeekOptions} label="Día de la semana" />
+          <OptionsPicker options={daysOfTheWeekOptions} label="Día de la semana" onChange={(value) => setDayOfWeek(value)}/>
         </div>
         <div>
-          <OptionsPicker options={classTimesOptions} label="Hora de clase" />
+          <OptionsPicker options={classTimesOptions} label="Hora de clase" onChange={(value) => setClassTime(value)}/>
         </div>
         <div>
           <Toggle
-            isChecked={isChecked}
+            isChecked={isUnjustified}
             label="Tipo de falta"
-            onChange={(value) => setIsChecked(value)}
+            onChange={(value) => setIsUnjustified(value)}
             textForChecked="Injustificada"
             textForUnchecked="Justificada"
           />
@@ -92,7 +114,8 @@ const NewRecord = () => {
               name="reason"
               rows={3}
               className="block w-full rounded-md border-gray-300 shadow-md focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm resize-none"
-              defaultValue={""}
+              value={reason}
+              onChange={(event) => setReason(event.target.value)}
             />
           </div>
           <p className="mt-2 text-sm text-gray-500">
@@ -101,6 +124,7 @@ const NewRecord = () => {
         </div>
         <button
           className="col-span-2 rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          onClick={handleOnClick}
         >Registrar</button>
       </div>
     </div>
