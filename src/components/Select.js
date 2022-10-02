@@ -21,8 +21,8 @@ const Select = ({ options, label }) => {
   }
 
   return (
-    <div className="top-16 w-72">
-      {label ? <div className="text-sm font-medium text-gray-700">{label}</div> : null }
+    <div className="top-16 w-full">
+      {label ? <div className="text-sm font-medium text-gray-700 mb-1">{label}</div> : null }
       <Combobox value={selectedOption} onChange={handleOnChange}>
         <div className="relative">
           {/* <div className="relative w-full cursor-default overflow-hidden rounded-md bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm"> */}
@@ -48,7 +48,7 @@ const Select = ({ options, label }) => {
             leaveTo="opacity-0"
             afterLeave={() => setQuery('')}
           >
-            <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+            <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-[1]">
               {filteredPeople.length === 0 && query !== '' ? (
                 <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
                   Nothing found.

@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
+import { getArrayFromCollection } from "../helpers";
 
 const initialState = {
   loading: false,
@@ -16,11 +17,8 @@ export const getSubjects = createAsyncThunk(
     try {
       const colRef = collection(db, "subjects");
       const docsSnap = await getDocs(colRef);
-      const subjectsList = [];
-      docsSnap.forEach(doc => {
-        subjectsList.push({subjectId: doc.id, ...doc.data()});
-      })
-      return subjectsList;
+      const listOfSubjects = getArrayFromCollection(docsSnap);
+      return listOfSubjects;
     } catch (err) {
       throw new Error(err);
     }

@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { collection, query, where, getDocs, get } from "firebase/firestore";
+import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
+import { getArrayFromCollection } from "../helpers";
 
 const initialState = {
   loading: false,
@@ -10,18 +11,12 @@ const initialState = {
   list: [],
 }
 
-const getArrayFromCollection  = (collection) => {
-  return collection.docs.map((doc) => {
-    return {...doc.data(), id: doc.id}
-  })
-}
-
 export const getUserStudents = createAsyncThunk(
   "students/getUserStudents",
-  async () => {
+  async (grade) => {
     try {
       const colRef = collection(db, "students");
-      const q = query(colRef, where("grade", "==", "8D"));
+      const q = query(colRef, where("grade", "==", grade));
       const dataSnap = await getDocs(q);
       const listOfStudents = getArrayFromCollection(dataSnap);
       return listOfStudents;

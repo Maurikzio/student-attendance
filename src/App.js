@@ -10,6 +10,7 @@ import { auth } from "./firebase/firebaseConfig";
 import { logoutUser } from "./store/user/userSlice";
 import Students from "./pages/Students";
 import NotFound from "./components/NotFound";
+import NewRecord from "./pages/NewRecord";
 
 export default function App() {
   const { userId, userToken } = useSelector((state) => state.user);
@@ -48,8 +49,13 @@ export default function App() {
               <Students/>
             </ProtectedRoute>
           }/>
+          <Route path="/nuevo-registro" element={
+            <ProtectedRoute>
+              <NewRecord />
+            </ProtectedRoute>
+          }/>
           <Route path="/ingresar" element={<Login/>} />
-          <Route path="/register" element={<Register/>} />
+          {/* <Route path="/register" element={<Register/>} /> */}
         </Routes>
     </div>
   )
