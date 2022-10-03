@@ -3,9 +3,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getUserStudents } from '../store/students/studentsSlice';
 import { getSubjects, selectSubjects } from '../store/subjects/subjectsSlice';
 import { selectUserInfo, getUserInfo } from '../store/user/userSlice';
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
 import { db } from '../firebase/firebaseConfig';
 import { getAbsencesAddedByUser } from '../store/absences/absencesSlice';
+import { getArrayFromCollection } from '../store/helpers';
 
 const Home = () => {
   const userInfo = useSelector(selectUserInfo);

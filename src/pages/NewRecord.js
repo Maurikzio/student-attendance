@@ -4,7 +4,7 @@ import Select from '../components/Select';
 import Toggle from '../components/Toggle';
 import { selectUserInfo } from '../store/user/userSlice';
 import { getSubjects } from '../store/subjects/subjectsSlice';
-import { getUserStudents } from '../store/students/studentsSlice';
+import { getStudentsOfUser } from '../store/students/studentsSlice';
 import OptionsPicker from '../components/OptionsPicker';
 import { createAbsenceRecord } from '../store/absences/absencesSlice';
 
@@ -67,7 +67,7 @@ const NewRecord = () => {
 
   useEffect(() => {
     if(userInfo) {
-      dispatch(getUserStudents(userInfo.tutorOf));
+      dispatch(getStudentsOfUser(userInfo.tutorOf));
     }
   }, [userInfo, dispatch]);
 

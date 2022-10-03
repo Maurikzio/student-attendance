@@ -11,12 +11,12 @@ const initialState = {
   list: [],
 }
 
-export const getUserStudents = createAsyncThunk(
+export const getStudentsOfUser = createAsyncThunk(
   "students/getUserStudents",
-  async (grade) => {
+  async ({grade, gradeLetter}) => {
     try {
-      const colRef = collection(db, "students");
-      const q = query(colRef, where("grade", "==", grade));
+      const colRef = collection(db, `students${grade}`);
+      const q = query(colRef, where("grade", "==", `${grade}${gradeLetter}`));
       const dataSnap = await getDocs(q);
       const listOfStudents = getArrayFromCollection(dataSnap);
       return listOfStudents;
@@ -32,16 +32,16 @@ export const studentsSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(getUserStudents.pending, (state, action) => {
+      .addCase(getStudentsOfUser.pending, (state, action) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(getUserStudents.fulfilled, (state, action) => {
+      .addCase(getStudentsOfUser.fulfilled, (state, action) => {
         state.loading = false;
         state.success = true;
         state.list = action.payload;
       })
-      .addCase(getUserStudents.rejected, (state, action) => {
+      .addCase(getStudentsOfUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
