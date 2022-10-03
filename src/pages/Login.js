@@ -31,7 +31,7 @@ const Login = () => {
       {/* {error && <Alert message={error}/>} */}
       <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8">
         <div className='mb-4'>
-          <label htmlFor="email" className='block text-gray-700 text-sm font-bold mb-2'>Email</label>
+          <label htmlFor="email" className='block text-gray-700 text-sm font-medium mb-2'>Email</label>
           <input
             type="email"
             name="email"
@@ -39,13 +39,14 @@ const Login = () => {
             onChange={handleChange}
             value={user.email}
             autoComplete="off"
-            className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+            // className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
             />
         </div>
         <div className='mb-4'>
-          <label 
+          <label
             htmlFor="password"
-            className='block text-gray-700 text-sm font-bold mb-2'
+            className='block text-gray-700 text-sm font-medium mb-2'
           >Password</label>
           <input
             type="password"
@@ -54,12 +55,13 @@ const Login = () => {
             onChange={handleChange}
             value={user.password}
             autoComplete="off"
-            className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
           />
         </div>
         <div className='flex items-center justify-between'>
           <button
-            className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+            // className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+            className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
             >Login</button>
 
           {/* <a

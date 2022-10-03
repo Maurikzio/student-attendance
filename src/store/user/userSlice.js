@@ -84,6 +84,7 @@ export const userSlice = createSlice({
         state.success = true;
         state.userId = action.payload.uid;
         state.userToken = action.payload.userToken;
+        // state.isLoggedIn = true;  //TODO: for  CASE-001
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -99,6 +100,7 @@ export const userSlice = createSlice({
         state.userId = null;
         state.userToken = null;
         state.userInfo = null;
+        // state.isLoggedIn = false; //TODO: for  CASE-001
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.loading = false;

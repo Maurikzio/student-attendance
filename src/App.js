@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
-import Login from "./components/Login";
+import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Register from "./components/Register";
 import { auth } from "./firebase/firebaseConfig";
@@ -13,27 +13,30 @@ import NotFound from "./components/NotFound";
 import NewRecord from "./pages/NewRecord";
 
 export default function App() {
-  const { userId, userToken } = useSelector((state) => state.user);
+  const { userId, userToken, isLoggedIn } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   const { userToken:uToken =null } = localStorage.getItem('ea') ? JSON.parse(localStorage.getItem('ea')) : {};
 
-
-  //TODO: Needs checking...
- /* useEffect(() => {
+  //TODO: CASE-001: Needs checking..., maybe move out off App, since loing does not need to know if the user is logged in or not
+ /*useEffect(() => {
     const unsub = onAuthStateChanged(auth, (currentUser) => {
       console.log("token in localstorage:", uToken);
       console.log("userToken:", userToken);
-      console.log("currentUser?.accessToken:", currentUser?.accessToken);
-      if(userId === currentUser?.uid && userToken !== currentUser?.accessToken) {
+      console.log("from onAuthStateChanged:", currentUser?.accessToken);
+      if(currentUser?.accessToken !== uToken && isLoggedIn){
+        console.log("needs logout")
         dispatch(logoutUser());
+      } else {
+        console.log("can continue..")
       }
+      // if(userId === currentUser?.uid && userToken !== currentUser?.accessToken) {
+      //   dispatch(logoutUser());
+      // }
     })
 
     return () => unsub()
   }, [])*/
-
-
 
   return (
     <div className="bg-slate-200 h-screen text-black flex">
