@@ -4,6 +4,7 @@ import ReactDatePicker /*{ registerLocale, setDefaultLocale }*/ from "react-date
 // import es from 'date-fns/locale/es';
 import "react-datepicker/dist/react-datepicker.css";
 import buildLocalizeFn from "date-fns/locale/_lib/buildLocalizeFn";
+import getDay from "date-fns/getDay"
 // registerLocale('es', es)
 // setDefaultLocale('es');
 
@@ -44,8 +45,12 @@ const DatePicker = ({ label, onChange }) => {
 
   const onDatePickerChange = (date) => {
     setSelectedDate(date)
-    // with: Date.now() , + new Date() and new Date().valueOf() we get the milliseconds (timestamp)
-    console.log(date.valueOf());
+    // console.log(date.valueOf());
+  };
+
+  const isWeekend = (date) => {
+    const day = getDay(date);
+    return day !== 0 && day !== 6;
   }
 
   return (
@@ -60,9 +65,12 @@ const DatePicker = ({ label, onChange }) => {
         locale={locale}
         dateFormat="iiii, LLLL dd yyyy"
         onChange={onDatePickerChange}
+        filterDate={isWeekend}
       />
     </div>
   );
 };
 
 export default DatePicker;
+
+// with: Date.now() , + new Date() and new Date().valueOf() we get the milliseconds (timestamp)
