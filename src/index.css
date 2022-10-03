@@ -19,3 +19,11 @@ code {
 /* input {
   --tw-ring-shadow: 0 0 #000 !important;
 } */
+
+@layer components {
+  .rdp__day.react-datepicker__day--selected,
+  .rdp__day.react-datepicker__day--keyboard-selected,
+  .rdp__day.react-datepicker__day--selected:hover {
+    background-color: #3F51B5;
+  }
+}

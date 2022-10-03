@@ -7,6 +7,7 @@ import { getSubjects } from '../store/subjects/subjectsSlice';
 import { getStudentsOfUser } from '../store/students/studentsSlice';
 import OptionsPicker from '../components/OptionsPicker';
 import { createAbsenceRecord } from '../store/absences/absencesSlice';
+import DatePicker from '../components/DatePicker/DatePicker';
 
 
 const NewRecord = () => {
@@ -90,7 +91,8 @@ const NewRecord = () => {
           <Select options={mappedSubjects} label="Materia" onChange={(value) => setSubject(value)}/>
         </div>
         <div>
-          <OptionsPicker options={daysOfTheWeekOptions} label="Día de la semana" onChange={(value) => setDayOfWeek(value)}/>
+          {/* <OptionsPicker options={daysOfTheWeekOptions} label="Día de la semana" onChange={(value) => setDayOfWeek(value)}/> */}
+          <DatePicker label="Fecha"/>
         </div>
         <div>
           <OptionsPicker options={classTimesOptions} label="Hora de clase" onChange={(value) => setClassTime(value)}/>
