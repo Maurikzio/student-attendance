@@ -39,7 +39,7 @@ export default function App() {
   }, [])*/
 
   return (
-    <div className="bg-slate-200 h-screen text-black flex">
+    <div className="bg-[#f2f2f2] h-screen text-black flex">
         <Routes>
           <Route path='*' element={<NotFound/>} />
           <Route path="/" element={
