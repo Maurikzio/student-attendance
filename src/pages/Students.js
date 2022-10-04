@@ -14,9 +14,7 @@ const Students = () => {
 
   useEffect(() => {
     if(userInfo) {
-      const grade = userInfo.tutorOf.replace(/[A-Z]/g, "");
-      const gradeLetter = userInfo.tutorOf.replace(/[0-9]/g, "");
-      dispatch(getStudentsOfUser({grade, gradeLetter}));
+      dispatch(getStudentsOfUser(userInfo.tutorOf));
     }
   }, [userInfo, dispatch]);
 

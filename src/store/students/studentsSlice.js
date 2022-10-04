@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
 import { getArrayFromCollection } from "../helpers";
 
@@ -13,10 +13,12 @@ const initialState = {
 
 export const getStudentsOfUser = createAsyncThunk(
   "students/getUserStudents",
-  async ({grade, gradeLetter}) => {
+  async (data) => {
+    const grade = data.replace(/[A-Z]/g, "");
+    const gradeLetter = data.replace(/[0-9]/g, "");
     try {
       const colRef = collection(db, `students${grade}`);
-      const q = query(colRef, where("grade", "==", `${grade}${gradeLetter}`));
+      const q = query(colRef, where("grade", "==", `${grade}${gradeLetter}`), orderBy("lastname"));
       const dataSnap = await getDocs(q);
       const listOfStudents = getArrayFromCollection(dataSnap);
       return listOfStudents;
