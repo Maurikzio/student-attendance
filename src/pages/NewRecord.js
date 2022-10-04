@@ -23,7 +23,7 @@ const NewRecord = () => {
   const { loading: loadingStudents, list: studentsList } = useSelector((state) => state.students);
   const dispatch = useDispatch();
 
-  const mappedStudents = studentsList?.map(({id, name, secondName, lastName, secondLastname}) => ({ id, value: `${name} ${secondName} ${lastName} ${secondLastname}`}));
+  const mappedStudents = studentsList?.map(({id, name, secondName, lastname, secondLastname}) => ({ id, value: `${lastname} ${secondLastname} ${name} ${secondName} `}));
 
   const mappedSubjects = subjectsList?.map(({ id, subjectName }) => ({id, value: subjectName}));
 
@@ -134,22 +134,3 @@ const NewRecord = () => {
 };
 
 export default NewRecord;
-
-/*
-<div key={option.value} className="flex items-center">
-  <input
-    id={`filter-mobile-${section.id}-${optionIdx}`}
-    name={`${section.id}[]`}
-    defaultValue={option.value}
-    type="checkbox"
-    defaultChecked={option.checked}
-    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-  />
-  <label
-    htmlFor={`filter-mobile-${section.id}-${optionIdx}`}
-    className="ml-3 min-w-0 flex-1 text-gray-500"
-  >
-    {option.label}
-  </label>
-</div>
-*/
