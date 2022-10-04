@@ -1,19 +1,17 @@
 import { useState, useEffect } from 'react';
+import { createAbsenceRecord } from '../store/absences/absencesSlice';
+import { getStudentsOfUser } from '../store/students/studentsSlice';
+import { getSubjects } from '../store/subjects/subjectsSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import DatePicker from '../components/DatePicker/DatePicker';
+import OptionsPicker from '../components/OptionsPicker';
 import Select from '../components/Select';
 import Toggle from '../components/Toggle';
-import { selectUserInfo } from '../store/user/userSlice';
-import { getSubjects } from '../store/subjects/subjectsSlice';
-import { getStudentsOfUser } from '../store/students/studentsSlice';
-import OptionsPicker from '../components/OptionsPicker';
-import { createAbsenceRecord } from '../store/absences/absencesSlice';
-import DatePicker from '../components/DatePicker/DatePicker';
-
 
 const NewRecord = () => {
   const [student, setStudent] = useState(null);
   const [subject, setSubject] = useState(null);
-  const [dayOfWeek, setDayOfWeek] = useState(null);
+  const [date, setDate] = useState(Date.now());
   const [classTime, setClassTime] = useState(null);
   const [isUnjustified, setIsUnjustified] = useState(true);
   const [reason, setReason] = useState("");
@@ -23,19 +21,9 @@ const NewRecord = () => {
   const { loading: loadingStudents, list: studentsList } = useSelector((state) => state.students);
   const dispatch = useDispatch();
 
-  const mappedStudents = studentsList?.map(({id, name, secondName, lastname, secondLastname}) => ({ id, value: `${lastname} ${secondLastname} ${name} ${secondName} `}));
+  const mappedStudents = studentsList?.map(({id, name, secondName, lastname, secondLastname, grade}) => ({ id, value: `${lastname} ${secondLastname} ${name} ${secondName}`, grade}));
 
   const mappedSubjects = subjectsList?.map(({ id, subjectName }) => ({id, value: subjectName}));
-
-  const daysOfTheWeekOptions = [
-    {id: "L1", value: "Lunes", valueToDisplay: "L"},
-    {id: "M2", value: "Martes", valueToDisplay: "M"},
-    {id: "Mi3", value: "Miércoles", valueToDisplay: "Mi"},
-    {id: "J4", value: "Jueves", valueToDisplay: "J"},
-    {id: "V5", value: "Viernes", valueToDisplay: "V"},
-    {id: "S6", value: "Sabado", valueToDisplay: "S"},
-    {id: "D7", value: "Domingo", valueToDisplay: "D"},
-  ];
 
   const classTimesOptions = [
     {id: "CT1", value: 1},
@@ -48,16 +36,25 @@ const NewRecord = () => {
   ]
 
   const handleOnClick = () => {
+    const { name, secondName, lastname, secondLastname } = userInfo;
+
     const data = {
-      student,
-      subject,
-      dayOfWeek,
-      classTime,
-      isUnjustified,
+      classTime: classTime.value,
+      createdBy:`${lastname} ${secondLastname} ${name} ${secondName}`,
+      createdById: userId,
+      createdWhen: Date.now(),
+      date,
+      grade: student.grade,
+      modifiedBy: "",
+      modifiedById: "",
+      modifiedWhen: "",
       reason,
-      userId,
-      userInfo,
-    };
+      student: student.value,
+      studentId: student.id,
+      subject: subject.value,
+      subjectId: subject.id,
+      type: isUnjustified ? "I" : "J",
+    }
 
     dispatch(createAbsenceRecord(data))
   }
@@ -91,8 +88,7 @@ const NewRecord = () => {
           <Select options={mappedSubjects} label="Materia" onChange={(value) => setSubject(value)}/>
         </div>
         <div>
-          {/* <OptionsPicker options={daysOfTheWeekOptions} label="Día de la semana" onChange={(value) => setDayOfWeek(value)}/> */}
-          <DatePicker label="Fecha"/>
+          <DatePicker label="Fecha" onChange={(value) => setDate(value)} date={date}/>
         </div>
         <div>
           <OptionsPicker options={classTimesOptions} label="Hora de clase" onChange={(value) => setClassTime(value)}/>
