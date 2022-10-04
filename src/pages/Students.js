@@ -39,8 +39,8 @@ const Students = () => {
     return {
       student: `${lastname} ${secondLastname} ${name} ${secondName}`,
       grade,
-      justified: absences.I,
-      unjustified: absences.J,
+      justified: absences.J,
+      unjustified: absences.I,
       totalAbsences: absences.list.length,
     }
   })
