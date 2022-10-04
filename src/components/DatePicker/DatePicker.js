@@ -40,12 +40,12 @@ const locale = {
   }
 }
 
-const DatePicker = ({ label, onChange }) => {
-  const [selectedDate, setSelectedDate] = useState(Date.now());
+const DatePicker = ({ date, label, onChange }) => {
+  const [selectedDate, setSelectedDate] = useState(date ?? Date.now());
 
   const onDatePickerChange = (date) => {
     setSelectedDate(date)
-    // console.log(date.valueOf());
+    onChange(date.valueOf());
   };
 
   const isWeekend = (date) => {
