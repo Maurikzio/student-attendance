@@ -8,8 +8,18 @@ import { db } from '../firebase/firebaseConfig';
 import { getAbsencesAddedByUser } from '../store/absences/absencesSlice';
 import { getArrayFromCollection } from '../store/helpers';
 
+const createAbsenceTypeBadge = (type) => {
+  const absenceTypeText = type === "I" ? "Injustificada" : "Justificada";
+  return (
+    <div className={`${type === "I" ? "text-red-700 bg-red-200" : "text-yellow-700 bg-yellow-200"} rounded-full text-xs px-1 font-bold`}>
+      {absenceTypeText}
+    </div>
+  )
+}
+
 const Home = () => {
   const userInfo = useSelector(selectUserInfo);
+  const { list: listOfAbsences, loading: absencesLoading } = useSelector((state) => state.absences);
 
   const dispatch = useDispatch();
 
@@ -39,16 +49,62 @@ const Home = () => {
   //   setStudent({...student, [name]: value});
   // }
 
+  const makeClassTimeHoursReadable = (hour) => {
+    const classTimeHours = {
+      1: "Primera",
+      2: "Segunda",
+      3: "Tercera",
+      4: "Cuarta",
+      5: "Quinta",
+      6: "Sexta",
+      7: "Septima"
+    };
+    return `${classTimeHours[hour]} hora`
+  };
+
   useEffect(() => {
     if (userInfo) {
       dispatch(getAbsencesAddedByUser(userInfo.tutorOf))
     }
-  }, [userInfo, dispatch])
+  }, [userInfo, dispatch]);
 
+  if (absencesLoading) {
+    return (
+      <div className="w-full h-full bg-slate-100 flex justify-center items-center">
+        <h2 className="text-3xl font-thin tracking-tight text-indigo-600">Cargando...</h2>
+      </div>
+    )
+  }
 
   return (
     <div className='w-full h-full text-black p-4'>
-      <h1>Home</h1>
+      <h2 className="text-3xl m-[20px] font-bold tracking-tight text-indigo-600 col-span-2 text-center">Mis registros</h2>
+      <div className="grid grid-cols-2 gap-5">
+        {
+          listOfAbsences?.map(absence => (
+            <div className="rounded-md bg-white p-4">
+              <div className='font-bold pb-2 flex justify-between'>
+                <p>{absence.student}</p>
+                <div className='flex gap-5 items-center font-normal text-xs text-indigo-600'>
+                  <p>Eliminar</p>
+                  {createAbsenceTypeBadge(absence.type)}
+                </div>
+              </div>
+              <div className="flex gap-4 pb-2 text-sm font-medium text-gray-700">
+                <p>{absence.grade}</p>
+                <p>{absence.subject}</p>
+                <p>{makeClassTimeHoursReadable(absence.classTime)}</p>
+              </div>
+              <div className='pb-2 border-b text-sm font-medium text-gray-700'>
+                <p><span className='text-indigo-600 font-medium'>Reportado por:</span> {absence.createdBy}</p>
+              </div>
+              <div className="text-sm font-medium text-gray-700 pt-2">
+                <p><span className='text-indigo-600'>Razón:</span> {absence.reason}</p>
+              </div>
+            </div>
+          ))
+        }
+      </div>
     </div>
   );
 }

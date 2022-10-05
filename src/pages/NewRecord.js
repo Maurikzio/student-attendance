@@ -115,6 +115,7 @@ const NewRecord = () => {
               value={reason}
               onChange={(event) => setReason(event.target.value)}
               placeholder="Una corta descripción acerca de esta falta"
+              maxLength={300}
             />
           </div>
         </div>

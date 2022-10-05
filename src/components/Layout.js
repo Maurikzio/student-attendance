@@ -22,7 +22,7 @@ const Layout = ({children }) => {
         </div>
       ) : null}
       <aside className="w-64 h-full" aria-label="Sidebar">
-        <div className="h-full overflow-y-auto py-4 px-3 bg-gray-50 dark:bg-gray-800 flex flex-col">
+        <div className="h-full w-64 overflow-y-auto py-4 px-3 bg-gray-50 dark:bg-gray-800 flex flex-col">
             {userInfo ? (<div className="p-2 text-white h-24">
               <h2>{`${userInfo.name} ${userInfo.lastname}`}</h2>
               <h3>{userInfo.tutorOf}</h3>
@@ -98,7 +98,7 @@ const Layout = ({children }) => {
         </div>
       </aside>
 
-      <div className="grow overflow-y-scroll borde h-full">
+      <div className="grow overflow-y-scroll border h-full">
         {children}
       </div>
     </div>
