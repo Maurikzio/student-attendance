@@ -3,6 +3,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { addDoc, collection, doc, getDocs, updateDoc, increment, arrayUnion } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
 import { getArrayFromCollection } from "../helpers";
+import { toast } from 'react-toastify';
 
 const initialState = {
   loading: false,
@@ -23,15 +24,14 @@ export const createAbsenceRecord = createAsyncThunk(
 
       /* update the student fields related to the just created absence record  "absences: {J:"", I:"", absences: []}*/
       const studentRef = doc(db, `students${grade}`, data.studentId);
-      const keyOfType = `absences.${data.type}`;
-      const tmpObj = { [keyOfType]: increment(1) };
       await updateDoc(studentRef, {
-        ...tmpObj,
+        ['absences.' + data.type]: increment(1),
         "absences.list": arrayUnion(createdRecordRef.id)
       })
-
+      toast.success("El nuevo registro ha sido creado", { bodyClassName: "bg-lime-50", className: "!bg-lime-50 text-white"});
     } catch(err) {
       console.log("err", err);
+      toast.error("El registro no ha podido ser creado", { bodyClassName: "bg-rose-50", className: "!bg-rose-50 text-white"});
       throw new Error(err);
     }
   }

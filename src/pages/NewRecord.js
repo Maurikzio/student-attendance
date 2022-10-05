@@ -114,11 +114,9 @@ const NewRecord = () => {
               className="block w-full rounded-md border-gray-300 shadow-md focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm resize-none"
               value={reason}
               onChange={(event) => setReason(event.target.value)}
+              placeholder="Una corta descripción acerca de esta falta"
             />
           </div>
-          <p className="mt-2 text-sm text-gray-500">
-            Una corta descripción acerca de esta falta.
-          </p>
         </div>
         <button
           className="col-span-2 rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"

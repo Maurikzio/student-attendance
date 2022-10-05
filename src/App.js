@@ -11,6 +11,8 @@ import { logoutUser } from "./store/user/userSlice";
 import Students from "./pages/Students";
 import NotFound from "./components/NotFound";
 import NewRecord from "./pages/NewRecord";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function App() {
   const { userId, userToken, isLoggedIn } = useSelector((state) => state.user);
@@ -60,6 +62,7 @@ export default function App() {
           <Route path="/ingresar" element={<Login/>} />
           {/* <Route path="/register" element={<Register/>} /> */}
         </Routes>
+        <ToastContainer/>
     </div>
   )
 };

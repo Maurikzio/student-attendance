@@ -34,6 +34,7 @@ const Select = ({ options, label, onChange }) => {
               displayValue={(person) => person?.value}
               onChange={(event) => setQuery(event.target.value)}
               placeholder={`Selecccionar ${label?.toLowerCase() || ""}`}
+              autoComplete="off"
             />
             <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
               <ChevronUpDownIcon
