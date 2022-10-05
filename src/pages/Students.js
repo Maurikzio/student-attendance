@@ -18,14 +18,6 @@ const Students = () => {
     }
   }, [userInfo, dispatch]);
 
-  if (studentsLoading) {
-    return (
-      <div className="w-full h-full bg-slate-500 flex justify-center items-center">
-        <h1>Cargando...</h1>
-      </div>
-    )
-  }
-
   const headersForCSV = [
     {label: "Estudiante", key: "student"},
     {label: "Curso", key: "grade"},
@@ -45,10 +37,20 @@ const Students = () => {
     }
   })
 
+  if (studentsLoading) {
+    return (
+      <div className="w-full h-full bg-slate-100 flex justify-center items-center">
+        <h2 className="text-3xl font-thin tracking-tight text-indigo-600">Cargando...</h2>
+      </div>
+    )
+  }
+
   return (
     <div className="w-full min-h-full text-black p-4">
-      <div className="bg-white rounded-md p-4">
-        <DownloadCSV data={dataForTable} headers={headersForCSV} filename="students"/>
+      <div className="bg-white rounded-md p-4 flex flex-col">
+        <div className="ml-auto">
+          <DownloadCSV data={dataForTable} headers={headersForCSV} filename="students"/>
+        </div>
         <div className="px-[40px]">
           <Table data={dataForTable}/>
         </div>

@@ -16,9 +16,9 @@ const Layout = ({children }) => {
     <div className="flex w-full min-h-full relative">
       {(loadingUser) ? (
         <div
-          className="absolute left-0 top-0 w-full h-full bg-slate-200 flex justify-center items-center"
+          className="absolute left-0 top-0 w-full h-full bg-slate-100 flex justify-center items-center"
         >
-          <h1>Cargando...</h1>
+          <h2 className="text-3xl font-thin tracking-tight text-indigo-600">Cargando...</h2>
         </div>
       ) : null}
       <aside className="w-64 h-full" aria-label="Sidebar">
@@ -89,7 +89,7 @@ const Layout = ({children }) => {
             </ul> */}
             <div className="border-t dark:border-gray-700 pt-4 mt-auto">
               <button
-                className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                className="inline-flex justify-center w-full rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 onClick={() => dispatch(logoutUser())}
               >
                 Salir

@@ -71,8 +71,8 @@ const NewRecord = () => {
 
   if(loadingSubjects || loadingStudents) {
     return (
-      <div className="w-full h-full bg-slate-500 flex justify-center items-center">
-        <h1>Cargando...</h1>
+      <div className="w-full h-full bg-slate-100 flex justify-center items-center">
+        <h2 className="text-3xl font-thin tracking-bold text-indigo-600">Cargando...</h2>
       </div>
     )
   }

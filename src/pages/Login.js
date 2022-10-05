@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-
 import { loginUser } from "../store/user/userSlice";
 
 const Login = () => {
@@ -36,7 +35,7 @@ const Login = () => {
           <input
             type="email"
             name="email"
-            placeholder="Your email"
+            placeholder="Tu correo electrónico"
             onChange={handleChange}
             value={user.email}
             autoComplete="off"
@@ -52,7 +51,7 @@ const Login = () => {
           <input
             type="password"
             name="password"
-            placeholder="Your password"
+            placeholder="Tu contraseña"
             onChange={handleChange}
             value={user.password}
             autoComplete="off"
