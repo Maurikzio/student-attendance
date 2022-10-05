@@ -5,8 +5,9 @@ import { getSubjects, selectSubjects } from '../store/subjects/subjectsSlice';
 import { selectUserInfo, getUserInfo } from '../store/user/userSlice';
 import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
 import { db } from '../firebase/firebaseConfig';
-import { getAbsencesAddedByUser } from '../store/absences/absencesSlice';
+import { deleteAbsence, getAbsencesAddedByUser, updateAbsencesList } from '../store/absences/absencesSlice';
 import { getArrayFromCollection } from '../store/helpers';
+import Modal from '../components/Modal';
 
 const createAbsenceTypeBadge = (type) => {
   const absenceTypeText = type === "I" ? "Injustificada" : "Justificada";
@@ -18,6 +19,8 @@ const createAbsenceTypeBadge = (type) => {
 }
 
 const Home = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [absenceToDelete, setAbsenceToDelete] = useState(null);
   const userInfo = useSelector(selectUserInfo);
   const { list: listOfAbsences, loading: absencesLoading } = useSelector((state) => state.absences);
 
@@ -62,6 +65,28 @@ const Home = () => {
     return `${classTimeHours[hour]} hora`
   };
 
+  const onCloseModal = () => {
+    setAbsenceToDelete(null)
+    setIsModalOpen(false);
+  }
+
+  const onYesButtonClick = () => {
+    if(absenceToDelete) {
+      const studentId = absenceToDelete.studentId;
+      const absenceId = absenceToDelete.id;
+      const absenceType = absenceToDelete.type;
+      const studentGrade = absenceToDelete.grade;
+
+      dispatch(deleteAbsence({studentId, absenceId, absenceType, studentGrade}));
+    }
+    onCloseModal();
+  }
+
+  const onDeleteClick = (absence) => {
+    setAbsenceToDelete(absence);
+    setIsModalOpen(true);
+  }
+
   useEffect(() => {
     if (userInfo) {
       dispatch(getAbsencesAddedByUser(userInfo.tutorOf))
@@ -77,16 +102,20 @@ const Home = () => {
   }
 
   return (
+    <>
     <div className='w-full h-full text-black p-4'>
       <h2 className="text-3xl m-[20px] font-bold tracking-tight text-indigo-600 col-span-2 text-center">Mis registros</h2>
       <div className="grid grid-cols-2 gap-5">
         {
           listOfAbsences?.map(absence => (
-            <div className="rounded-md bg-white p-4">
+            <div className="rounded-md bg-white p-4" key={absence.id}>
               <div className='font-bold pb-2 flex justify-between'>
                 <p>{absence.student}</p>
                 <div className='flex gap-5 items-center font-normal text-xs text-indigo-600'>
-                  <p>Eliminar</p>
+                  <button
+                    className="hover:bg-indigo-600 hover:text-white rounded-sm px-1"
+                    onClick={() => onDeleteClick(absence)}
+                  >Eliminar</button>
                   {createAbsenceTypeBadge(absence.type)}
                 </div>
               </div>
@@ -106,6 +135,16 @@ const Home = () => {
         }
       </div>
     </div>
+    <Modal
+      isOpen={isModalOpen}
+      closeModal={onCloseModal}
+      title="Desea eliminar registro?"
+      contentText="Este proceso es irreversible, no se podrán recuperar los datos asociados a este registro y de continuar se modificarán las estadíticas del estudiante relacionado con este registro. "
+      yesText="Si, continuar!"
+      noText="No"
+      onYesButton={onYesButtonClick}
+    />
+    </>
   );
 }
 
