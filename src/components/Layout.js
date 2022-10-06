@@ -98,7 +98,7 @@ const Layout = ({children }) => {
         </div>
       </aside>
 
-      <div className="grow overflow-y-scroll border h-full">
+      <div className="grow overflow-y-scroll border h-full relative">
         {children}
       </div>
     </div>

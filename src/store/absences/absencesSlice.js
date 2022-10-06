@@ -41,6 +41,8 @@ export const createAbsenceRecord = createAsyncThunk(
 export const getAbsencesAddedByUser = createAsyncThunk(
   "absences/getAbsencesByUser",
   async (data) => {
+    //TODO: update this when adding inspector logic
+
     const grade = data.replace(/[A-Z]/g, "");
     const gradeLetter = data.replace(/[0-9]/g, "");
     try {
@@ -65,12 +67,12 @@ export const deleteAbsence = createAsyncThunk(
       await deleteDoc(docRef);
 
       /* update the student fields related to the just created absence record  "absences: {J:"", I:"", absences: []}*/
-      const studentRef  =  doc(db, `students${grade}`, studentId);
+      const studentRef = doc(db, `students${grade}`, studentId);
       await updateDoc(studentRef, {
         ['absences.' + absenceType]: increment(-1),
         "absences.list": arrayRemove(absenceId)
       });
-      dispatch(updateAbsencesList(absenceId))
+      dispatch(filterAbsencesList(absenceId))
       toast.success("El registro ha sido borrado", { bodyClassName: "bg-lime-50", className: "!bg-lime-50 text-white"});
     } catch (err) {
       console.log(err);
@@ -81,12 +83,43 @@ export const deleteAbsence = createAsyncThunk(
   }
 )
 
+export const updateAbsenceType = createAsyncThunk(
+  "absences/updateType",
+  async (data, { dispatch }) => {
+    const { grade, id: absenceId, type, studentId } = data;
+
+    const gradeNumber = grade.replace(/[A-Z]/g, "");
+    const typesToChange = {I : "J", J : "I"};
+
+    try {
+      const docRef = doc(db, `absences${gradeNumber}`, absenceId);
+      await updateDoc(docRef, { type:  typesToChange[type] });
+
+      /* Update the student absences object */
+      const studentRef = doc(db, `students${gradeNumber}`, studentId);
+      await updateDoc(studentRef ,{
+        'absences.I': increment(type === "I" ? -1 : 1),
+        'absences.J': increment(type === "J" ? -1 : 1),
+      })
+      dispatch(changeAbsenceType({ absenceId, nextType: typesToChange[type]}));
+      toast.success("El registro ha sido actualizado", { bodyClassName: "bg-lime-50", className: "!bg-lime-50 text-white"});
+    } catch (err) {
+      toast.error("No se ha podido actualizar el registro", { bodyClassName: "bg-rose-50", className: "!bg-rose-50 text-white"});
+      console.log(err);
+      throw new Error(err);
+    }
+  }
+)
+
 export const absencesSlice = createSlice({
   name: "absences",
   initialState,
   reducers: {
-    updateAbsencesList: (state, action) => {
+    filterAbsencesList: (state, action) => {
       state.list = state.list.filter(item => item.id !== action.payload);
+    },
+    changeAbsenceType: (state, action) => {
+      state.list = state.list.map(item => item.id === action.payload.absenceId ? {...item, type: action.payload.nextType} : item)
     }
   },
   extraReducers(builder) {
@@ -128,9 +161,21 @@ export const absencesSlice = createSlice({
         state.loading = false;
         state.error = action.payload
       })
+      .addCase(updateAbsenceType.pending, (state, action) => {
+        state.loading = true;
+        state.error = null
+      })
+      .addCase(updateAbsenceType.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+      })
+      .addCase(updateAbsenceType.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload
+      })
   }
 })
 
-export const { updateAbsencesList } = absencesSlice.actions;
+export const { filterAbsencesList, changeAbsenceType } = absencesSlice.actions;
 
 export default absencesSlice.reducer;

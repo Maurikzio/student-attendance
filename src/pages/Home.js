@@ -5,18 +5,10 @@ import { getSubjects, selectSubjects } from '../store/subjects/subjectsSlice';
 import { selectUserInfo, getUserInfo } from '../store/user/userSlice';
 import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
 import { db } from '../firebase/firebaseConfig';
-import { deleteAbsence, getAbsencesAddedByUser, updateAbsencesList } from '../store/absences/absencesSlice';
+import { deleteAbsence, getAbsencesAddedByUser, updateAbsenceType } from '../store/absences/absencesSlice';
 import { getArrayFromCollection } from '../store/helpers';
 import Modal from '../components/Modal';
-
-const createAbsenceTypeBadge = (type) => {
-  const absenceTypeText = type === "I" ? "Injustificada" : "Justificada";
-  return (
-    <div className={`${type === "I" ? "text-red-700 bg-red-200" : "text-yellow-700 bg-yellow-200"} rounded-full text-xs px-1 font-bold`}>
-      {absenceTypeText}
-    </div>
-  )
-}
+import ReactTooltip from 'react-tooltip';
 
 const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -93,16 +85,21 @@ const Home = () => {
     }
   }, [userInfo, dispatch]);
 
-  if (absencesLoading) {
-    return (
-      <div className="w-full h-full bg-slate-100 flex justify-center items-center">
-        <h2 className="text-3xl font-thin tracking-tight text-indigo-600">Cargando...</h2>
-      </div>
-    )
-  }
+  // if (absencesLoading) {
+  //   return (
+  //     <div className="w-full h-full bg-transparent flex justify-center items-center">
+  //       <h2 className="text-3xl font-thin tracking-tight text-indigo-600">Cargando...</h2>
+  //     </div>
+  //   )
+  // }
 
   return (
     <>
+    {absencesLoading ? (
+      <div className="w-full h-full flex justify-center items-center absolute top-0 left-0 bg-slate-600 bg-opacity-25">
+        <h2 className="text-3xl font-thin tracking-tight text-indigo-600">Cargando...</h2>
+      </div>
+    ) : null}
     <div className='w-full h-full text-black p-4'>
       <h2 className="text-3xl m-[20px] font-bold tracking-tight text-indigo-600 col-span-2 text-center">Mis registros</h2>
       <div className="grid grid-cols-2 gap-5">
@@ -116,7 +113,17 @@ const Home = () => {
                     className="hover:bg-indigo-600 hover:text-white rounded-sm px-1"
                     onClick={() => onDeleteClick(absence)}
                   >Eliminar</button>
-                  {createAbsenceTypeBadge(absence.type)}
+                  <button
+                    onClick={() => dispatch(updateAbsenceType(absence))}
+                    data-tip
+                    data-for="absenceTypeBadge"
+                    className={`${absence.type === "I" ? "text-red-700 bg-red-200" : "text-yellow-700 bg-yellow-200"} rounded-full text-xs px-1 font-bold`}
+                  >
+                    {absence.type === "I" ? "Injustificada" : "Justificada"}
+                  </button>
+                  <ReactTooltip id="absenceTypeBadge" place="top" effect='solid'>
+                    Haga click para cambiar el tipo de la falta.
+                  </ReactTooltip>
                 </div>
               </div>
               <div className="flex gap-4 pb-2 text-sm font-medium text-gray-700">
@@ -149,26 +156,3 @@ const Home = () => {
 }
 
 export default Home;
-
-
-{/* <label>
-        <h3>Lastname:</h3>
-        <input name="lastName" value={student.lastName} onChange={handleOnChange} autoComplete="off"/>
-      </label>
-      <label>
-        <h3>SecondLastname:</h3>
-        <input name="secondLastname" value={student.secondLastname} onChange={handleOnChange} autoComplete="off"/>
-      </label>
-      <label>
-        <h3>Name:</h3>
-        <input name="name" value={student.name} onChange={handleOnChange} autoComplete="off"/>
-      </label>
-      <label>
-        <h3>SecondName:</h3>
-        <input name="secondName" value={student.secondName} onChange={handleOnChange} autoComplete="off"/>
-      </label>
-      <hr className='mt-3'/>
-      <button
-        className="rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm"
-        onClick={handleOnClick}
-      >Add student</button> */}
