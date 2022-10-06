@@ -69,17 +69,23 @@ const NewRecord = () => {
     }
   }, [userInfo, dispatch]);
 
-  if(loadingSubjects || loadingStudents) {
-    return (
-      <div className="w-full h-full bg-slate-100 flex justify-center items-center">
-        <h2 className="text-3xl font-thin tracking-bold text-indigo-600">Cargando...</h2>
-      </div>
-    )
-  }
+  // if(loadingSubjects || loadingStudents) {
+  //   return (
+  //     <div className="w-full h-full bg-slate-100 flex justify-center items-center">
+  //       <h2 className="text-3xl font-thin tracking-bold text-indigo-600">Cargando...</h2>
+  //     </div>
+  //   )
+  // }
 
   return (
-    <div className='w-full h-full text-black p-4'>
-      <div className='bg-white rounded-md p-4 grid grid-cols-2 gap-5'>
+    <>
+    {(loadingSubjects || loadingStudents)  ? (
+      <div className="w-full h-full flex justify-center items-center absolute top-0 left-0 bg-slate-600 bg-opacity-25 z-10">
+        <h2 className="text-3xl font-thin tracking-tight text-indigo-600">Cargando...</h2>
+      </div>
+    ) : null}
+    <div className='w-full h-full text-black p-4 flex items-center justify-center content-center'>
+      <div className='bg-white rounded-md p-10 grid grid-cols-2 gap-5'>
         <h1 className="text-3xl font-bold tracking-tight text-gray-900 col-span-2 text-center">Registrar Falta</h1>
         <div>
           <Select options={mappedStudents} label="Estudiante" onChange={(value) => setStudent(value)}/>
@@ -125,6 +131,7 @@ const NewRecord = () => {
         >Registrar</button>
       </div>
     </div>
+    </>
   )
 };
 

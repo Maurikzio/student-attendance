@@ -16,7 +16,7 @@ const Layout = ({children }) => {
     <div className="flex w-full min-h-full relative">
       {(loadingUser) ? (
         <div
-          className="absolute left-0 top-0 w-full h-full bg-slate-100 flex justify-center items-center"
+          className="absolute left-0 top-0 w-full h-full bg-slate-100 flex justify-center items-center z-10"
         >
           <h2 className="text-3xl font-thin tracking-tight text-indigo-600">Cargando...</h2>
         </div>

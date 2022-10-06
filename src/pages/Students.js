@@ -37,15 +37,21 @@ const Students = () => {
     }
   })
 
-  if (studentsLoading) {
-    return (
-      <div className="w-full h-full bg-slate-100 flex justify-center items-center">
-        <h2 className="text-3xl font-thin tracking-tight text-indigo-600">Cargando...</h2>
-      </div>
-    )
-  }
+  // if (studentsLoading) {
+  //   return (
+  //     <div className="w-full h-full bg-slate-100 flex justify-center items-center">
+  //       <h2 className="text-3xl font-thin tracking-tight text-indigo-600">Cargando...</h2>
+  //     </div>
+  //   )
+  // }
 
   return (
+    <>
+    {studentsLoading ? (
+      <div className="w-full h-full flex justify-center items-center absolute top-0 left-0 bg-slate-600 bg-opacity-25">
+        <h2 className="text-3xl font-thin tracking-tight text-indigo-600">Cargando...</h2>
+      </div>
+    ) : null}
     <div className="w-full min-h-full text-black p-4">
       <div className="bg-white rounded-md p-4 flex flex-col">
         <div className="ml-auto">
@@ -56,6 +62,7 @@ const Students = () => {
         </div>
       </div>
     </div>
+    </>
   )
 }
 
