@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { addDoc, collection, doc, getDocs, updateDoc, increment, arrayUnion, where, orderBy, deleteDoc, arrayRemove } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
-import { getArrayFromCollection } from "../helpers";
+import { getArrayFromCollection } from "../../helpers";
 import { toast } from 'react-toastify';
 
 const initialState = {

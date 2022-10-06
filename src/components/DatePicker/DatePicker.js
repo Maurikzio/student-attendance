@@ -3,42 +3,9 @@ import { useState } from "react";
 import ReactDatePicker /*{ registerLocale, setDefaultLocale }*/ from "react-datepicker";
 // import es from 'date-fns/locale/es';
 import "react-datepicker/dist/react-datepicker.css";
-import buildLocalizeFn from "date-fns/locale/_lib/buildLocalizeFn";
 import getDay from "date-fns/getDay"
-// registerLocale('es', es)
-// setDefaultLocale('es');
+import { spanishLocale } from "../../helpers";
 
-// registerLocale('ES', {
-//   localize: {
-//     month: n => months[n],
-//     day: n => days[n]
-//   },
-//   formatLong:{}
-// });
-
-const dayValues = {
-  narrow: ['D', 'L', 'M', 'Mi', 'J', 'V', 'S'],
-  abbreviated: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
-  wide: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
-}
-// const days = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa']
-const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
-
-const locale = {
-  localize: {
-    // day: n => days[n],
-    day: buildLocalizeFn({
-      values: dayValues,
-      defaultWidth: "narrow",
-      formattingValues: dayValues,
-      defaultFormattingWidth: 'narrow'
-    }),
-    month: n => months[n]
-  },
-  formatLong: {
-    date: () => 'mmmm-dd-yyyy'
-  }
-}
 
 const DatePicker = ({ date, label, onChange }) => {
   const [selectedDate, setSelectedDate] = useState(date ?? Date.now());
@@ -62,8 +29,8 @@ const DatePicker = ({ date, label, onChange }) => {
         popperPlacement="bottom"
         dayClassName={() => "rdp__day"}
         calendarClassName=""
-        locale={locale}
-        dateFormat="iiii, LLLL dd yyyy"
+        locale={spanishLocale}
+        dateFormat="iiii, dd LLLL yyyy"
         onChange={onDatePickerChange}
         filterDate={isWeekend}
       />

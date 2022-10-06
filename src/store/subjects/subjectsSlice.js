@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
-import { getArrayFromCollection } from "../helpers";
+import { getArrayFromCollection } from "../../helpers";
 
 const initialState = {
   loading: false,

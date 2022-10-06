@@ -6,9 +6,10 @@ import { selectUserInfo, getUserInfo } from '../store/user/userSlice';
 import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
 import { db } from '../firebase/firebaseConfig';
 import { deleteAbsence, getAbsencesAddedByUser, updateAbsenceType } from '../store/absences/absencesSlice';
-import { getArrayFromCollection } from '../store/helpers';
+import { getArrayFromCollection, spanishLocale } from '../helpers';
 import Modal from '../components/Modal';
 import ReactTooltip from 'react-tooltip';
+import { format } from 'date-fns';
 
 const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -127,9 +128,10 @@ const Home = () => {
                 </div>
               </div>
               <div className="flex gap-4 pb-2 text-sm font-medium text-gray-700">
-                <p>{absence.grade}</p>
-                <p>{absence.subject}</p>
-                <p>{makeClassTimeHoursReadable(absence.classTime)}</p>
+                <p>{absence.grade}</p> <i className='border-r '/>
+                <p>{absence.subject}</p> <i className='border-r '/>
+                <p>{makeClassTimeHoursReadable(absence.classTime)}</p> <i className='border-r '/>
+                <p>{format(absence.date, "iiii, dd LLLL yyyy", { locale: spanishLocale })}</p>
               </div>
               <div className='pb-2 border-b text-sm font-medium text-gray-700'>
                 <p><span className='text-indigo-600 font-medium'>Reportado por:</span> {absence.createdBy}</p>
