@@ -1,14 +1,11 @@
 import { useState } from "react";
 import {
-  createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable,
   getFilteredRowModel,
   getFacetedRowModel
 } from '@tanstack/react-table';
-
-const columnHelper = createColumnHelper();
 
 const FilterInput = ({ column }) => (
   <input
@@ -20,36 +17,8 @@ const FilterInput = ({ column }) => (
   />
 )
 
-const Table = ({ data = [] }) => {
+const Table = ({ data = [], columns = [] }) => {
   const [columnFilters, setColumnFilters] = useState([]);
-
-  const columns = [
-    columnHelper.accessor('student', {
-      header: "Estudiante",
-      cell: info => info.getValue(),
-      accessorKey: "student"
-    }),
-    columnHelper.accessor(row => row.grade, {
-      id: "grade",
-      // cell: info => <i>{info.getValue()}</i>,
-      header: () => <span>Curso</span>,
-      enableColumnFilter: false,
-    }),
-    columnHelper.accessor('justified', {
-      header: () => 'Justificadas',
-      cell: info => info.renderValue(),
-      enableColumnFilter: false,
-    }),
-    columnHelper.accessor('unjustified', {
-      header: () => <span>Injustificadas</span>,
-      enableColumnFilter: false,
-    }),
-    columnHelper.accessor('totalAbsences', {
-      header: 'Total de faltas',
-      cell: info => info.renderValue(),
-      enableColumnFilter: false,
-    }),
-  ];
 
   const table = useReactTable({
     data,

@@ -1,14 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
+import { collection, query, where, getDocs, orderBy, doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
-import { getArrayFromCollection } from "../../helpers";
+import { getArrayFromCollection, spanishLocale } from "../../helpers";
+import { toast } from 'react-toastify';
+import { getAbsencesOfStudent } from "../absences/absencesSlice";
+import { format } from "date-fns";
+import { bg } from "date-fns/locale";
 
 const initialState = {
   loading: false,
   error: null,
   success: false,
   list: [],
+  studentInfo: null,
+  studentAbsences: [],
 }
 
 export const getStudentsOfUser = createAsyncThunk(
@@ -28,6 +34,34 @@ export const getStudentsOfUser = createAsyncThunk(
   }
 )
 
+export const getStudentInfo = createAsyncThunk(
+  "students/getStudentInfo",
+  async ({studentId, studentGrade}, {dispatch}) => {
+    const grade = studentGrade.replace(/[A-Z]/g, "");
+
+    try {
+      const docRef = doc(db, `students${grade}`, studentId);
+      const docSnap = await getDoc(docRef);
+      const studentInfo = docSnap.data();
+      const res = { studentInfo, }
+      if(studentInfo?.absences?.list.length) {
+        const absences = studentInfo?.absences?.list.map(item => getDoc(doc(db, `absences${grade}`, item)))
+        const absencesList = await Promise.all(absences);
+        const absencesListInfo = absencesList
+          .map(doc => ({...doc.data(), id: doc.id}))
+          .sort((a, b) => b.date - a.date);
+        res.studentAbsences = absencesListInfo;
+      }
+      return res;
+    } catch (err) {
+      console.log("ERR", err);
+      toast.error("Estudiante no encontrado", { bodyClassName: "bg-rose-50", className: "!bg-rose-50 text-white"});
+      throw new Error(err);
+    }
+
+  }
+)
+
 export const studentsSlice = createSlice({
   name: "students",
   initialState,
@@ -44,6 +78,20 @@ export const studentsSlice = createSlice({
         state.list = action.payload;
       })
       .addCase(getStudentsOfUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(getStudentInfo.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getStudentInfo.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.studentInfo = action.payload.studentInfo;
+        state.studentAbsences = action.payload.studentAbsences;
+      })
+      .addCase(getStudentInfo.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

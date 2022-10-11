@@ -6,7 +6,7 @@ import { selectUserInfo, getUserInfo } from '../store/user/userSlice';
 import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
 import { db } from '../firebase/firebaseConfig';
 import { deleteAbsence, getAbsencesAddedByUser, updateAbsenceType } from '../store/absences/absencesSlice';
-import { getArrayFromCollection, spanishLocale } from '../helpers';
+import { getArrayFromCollection, makeClassTimeHoursReadable, spanishLocale } from '../helpers';
 import Modal from '../components/Modal';
 import ReactTooltip from 'react-tooltip';
 import { format } from 'date-fns';
@@ -44,19 +44,6 @@ const Home = () => {
   //   const { target: { name, value}} = event;
   //   setStudent({...student, [name]: value});
   // }
-
-  const makeClassTimeHoursReadable = (hour) => {
-    const classTimeHours = {
-      1: "Primera",
-      2: "Segunda",
-      3: "Tercera",
-      4: "Cuarta",
-      5: "Quinta",
-      6: "Sexta",
-      7: "Septima"
-    };
-    return `${classTimeHours[hour]} hora`
-  };
 
   const onCloseModal = () => {
     setAbsenceToDelete(null)
@@ -137,7 +124,7 @@ const Home = () => {
                 <p><span className='text-indigo-600 font-medium'>Reportado por:</span> {absence.createdBy}</p>
               </div>
               <div className="text-sm font-medium text-gray-700 pt-2">
-                <p><span className='text-indigo-600'>Razón:</span> {absence.reason}</p>
+                <p><span className='text-indigo-600'>Motivo:</span> {absence.reason}</p>
               </div>
             </div>
           ))

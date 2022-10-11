@@ -24,8 +24,22 @@ export const spanishLocale = {
   }
 }
 
+/* for getDocs response only */
 export const getArrayFromCollection  = (collection) => {
   return collection.docs.map((doc) => {
     return {...doc.data(), id: doc.id}
   })
 }
+
+export const makeClassTimeHoursReadable = (hour) => {
+  const classTimeHours = {
+    1: "Primera",
+    2: "Segunda",
+    3: "Tercera",
+    4: "Cuarta",
+    5: "Quinta",
+    6: "Sexta",
+    7: "Septima"
+  };
+  return `${classTimeHours[hour]} hora`
+};

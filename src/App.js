@@ -13,6 +13,7 @@ import NotFound from "./components/NotFound";
 import NewRecord from "./pages/NewRecord";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import StudentInfo from "./pages/StudentInfo";
 
 export default function App() {
   const { userId, userToken, isLoggedIn } = useSelector((state) => state.user);
@@ -52,6 +53,11 @@ export default function App() {
           <Route path="/estudiantes" element={
             <ProtectedRoute>
               <Students/>
+            </ProtectedRoute>
+          }/>
+          <Route path="/estudiante/:grade/:studentId" element={
+            <ProtectedRoute>
+              <StudentInfo/>
             </ProtectedRoute>
           }/>
           <Route path="/nuevo-registro" element={

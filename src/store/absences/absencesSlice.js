@@ -1,9 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { addDoc, collection, doc, getDocs, updateDoc, increment, arrayUnion, where, orderBy, deleteDoc, arrayRemove } from "firebase/firestore";
+import { addDoc, collection, doc, getDocs, updateDoc, increment, arrayUnion, where, orderBy, deleteDoc, arrayRemove, query } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
-import { getArrayFromCollection } from "../../helpers";
+import { getArrayFromCollection, spanishLocale } from "../../helpers";
 import { toast } from 'react-toastify';
+import { format } from "date-fns/esm";
 
 const initialState = {
   loading: false,
@@ -47,8 +48,8 @@ export const getAbsencesAddedByUser = createAsyncThunk(
     const gradeLetter = data.replace(/[0-9]/g, "");
     try {
       const colRef = collection(db, `absences${grade}` );
-      const docsSnap = await getDocs(colRef, where("grade", "==", `${grade}${gradeLetter}`), orderBy("createdWhen"));
-      const listOfAbsences = getArrayFromCollection(docsSnap);
+      const docsSnap = await getDocs(colRef, where("grade", "==", `${grade}${gradeLetter}`), orderBy("date", "asc"));
+      const listOfAbsences = getArrayFromCollection(docsSnap).sort((a, b) => b.date - a.date);
       return listOfAbsences;
     } catch (err) {
       throw new Error(err);
@@ -84,7 +85,7 @@ export const deleteAbsence = createAsyncThunk(
 )
 
 export const updateAbsenceType = createAsyncThunk(
-  "absences/updateType",
+  "absences/updateAbsenceType",
   async (data, { dispatch }) => {
     const { grade, id: absenceId, type, studentId } = data;
 
@@ -109,7 +110,25 @@ export const updateAbsenceType = createAsyncThunk(
       throw new Error(err);
     }
   }
-)
+);
+
+// export const getAbsencesOfStudent = createAsyncThunk(
+//   "absences/getStudentAbsences",
+//   async ({studentGrade, studentId}) => {
+//     const grade = studentGrade.replace(/[A-Z]/g, "");
+//     try {
+//       const colRef = collection(db, `absences${grade}`);
+//       const q = query(colRef, where("studentId", "==", studentId));
+//       const dataSnap = await getDocs(q);
+//       const listOfAbsences = getArrayFromCollection(dataSnap);
+//       return listOfAbsences;
+//     } catch (err) {
+//       toast.error("Registro de asistencia del estudiante no encontrado", { bodyClassName: "bg-rose-50", className: "!bg-rose-50 text-white"});
+//       console.log(err);
+//       throw new Error(err);
+//     }
+//   }
+// )
 
 export const absencesSlice = createSlice({
   name: "absences",
@@ -149,6 +168,19 @@ export const absencesSlice = createSlice({
         state.loading = false;
         state.error = action.payload
       })
+      // .addCase(getAbsencesOfStudent.pending, (state, action) => {
+      //   state.loading = true;
+      //   state.error = null
+      // })
+      // .addCase(getAbsencesOfStudent.fulfilled, (state, action) => {
+      //   state.loading = false;
+      //   state.success = true;
+      //   state.list = action.payload;
+      // })
+      // .addCase(getAbsencesOfStudent.rejected, (state, action) => {
+      //   state.loading = false;
+      //   state.error = action.payload
+      // })
       .addCase(deleteAbsence.pending, (state, action) => {
         state.loading = true;
         state.error = null

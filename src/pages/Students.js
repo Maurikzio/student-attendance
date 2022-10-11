@@ -1,11 +1,12 @@
-import { addDoc, collection } from "firebase/firestore";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { db } from "../firebase/firebaseConfig";
 import { getStudentsOfUser } from '../store/students/studentsSlice';
 import { selectUserInfo } from "../store/user/userSlice";
 import DownloadCSV from "../components/DownloadCSV/DownloadCSV";
 import Table from "../components/Table";
+import { createColumnHelper } from "@tanstack/react-table";
+import { Link } from "react-router-dom";
+
 
 const Students = () => {
   const userInfo = useSelector(selectUserInfo);
@@ -27,15 +28,56 @@ const Students = () => {
   ]
 
   const dataForTable = studentsList.map((student) => {
-    const {absences, grade, name, secondName, lastname, secondLastname} = student;
+    const {absences, grade, name, secondName, lastname, secondLastname, id} = student;
     return {
       student: `${lastname} ${secondLastname} ${name} ${secondName}`,
       grade,
       justified: absences.J,
       unjustified: absences.I,
       totalAbsences: absences.list.length,
+      studentId: id,
     }
   })
+
+  const columnHelper = createColumnHelper();
+
+  const columns = [
+    columnHelper.accessor('student', {
+      header: "Estudiante",
+      cell: info => {
+        const studentInfo = info.cell.row.original;
+        return (
+          <Link
+            className="hover:text-indigo-600"
+            to={`/estudiante/${studentInfo.grade}/${studentInfo.studentId}`}
+          >
+            {info.getValue()}
+          </Link>
+        )
+      },
+      accessorKey: "student"
+    }),
+    columnHelper.accessor(row => row.grade, {
+      id: "grade",
+      // cell: info => <i>{info.getValue()}</i>,
+      header: () => <span>Curso</span>,
+      enableColumnFilter: false,
+    }),
+    columnHelper.accessor('justified', {
+      header: () => 'Justificadas',
+      cell: info => info.renderValue(),
+      enableColumnFilter: false,
+    }),
+    columnHelper.accessor('unjustified', {
+      header: () => <span>Injustificadas</span>,
+      enableColumnFilter: false,
+    }),
+    columnHelper.accessor('totalAbsences', {
+      header: 'Total de faltas',
+      cell: info => info.renderValue(),
+      enableColumnFilter: false,
+    }),
+  ];
 
   // if (studentsLoading) {
   //   return (
@@ -52,13 +94,13 @@ const Students = () => {
         <h2 className="text-3xl font-thin tracking-tight text-indigo-600">Cargando...</h2>
       </div>
     ) : null}
-    <div className="w-full min-h-full text-black p-4">
-      <div className="bg-white rounded-md p-4 flex flex-col">
+    <div className="w-full text-black p-4 h-full max-h-full">
+      <div className="bg-white rounded-md p-4 flex flex-col h-full overflow-auto">
         <div className="ml-auto">
           <DownloadCSV data={dataForTable} headers={headersForCSV} filename="students"/>
         </div>
         <div className="px-[40px]">
-          <Table data={dataForTable}/>
+          <Table data={dataForTable} columns={columns}/>
         </div>
       </div>
     </div>
