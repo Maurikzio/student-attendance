@@ -114,17 +114,17 @@ const Home = () => {
                   </ReactTooltip>
                 </div>
               </div>
-              <div className="flex gap-4 pb-2 text-sm font-medium text-gray-700">
+              <div className="flex gap-4 pb-2 text-sm text-gray-500">
                 <p>{absence.grade}</p> <i className='border-r '/>
                 <p>{absence.subject}</p> <i className='border-r '/>
                 <p>{makeClassTimeHoursReadable(absence.classTime)}</p> <i className='border-r '/>
                 <p>{format(absence.date, "iiii, dd LLLL yyyy", { locale: spanishLocale })}</p>
               </div>
-              <div className='pb-2 border-b text-sm font-medium text-gray-700'>
-                <p><span className='text-indigo-600 font-medium'>Reportado por:</span> {absence.createdBy}</p>
+              <div className='pb-2 border-b text-sm text-gray-500'>
+                <p><span className='text-indigo-400'>Reportado por:</span> {absence.createdBy}</p>
               </div>
-              <div className="text-sm font-medium text-gray-700 pt-2">
-                <p><span className='text-indigo-600'>Motivo:</span> {absence.reason}</p>
+              <div className="text-sm text-gray-500 pt-2">
+                <p><span className='text-indigo-400'>Motivo:</span> {absence.reason}</p>
               </div>
             </div>
           ))
