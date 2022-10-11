@@ -76,7 +76,7 @@ const StudentInfo = () => {
             {
               [...absencesList].map(([key, value]) => (
                 <div className="relative" key={key}>
-                  <div className="sticky top-0 bg-indigo-600 px-1 text-white text-sm">{key}</div>
+                  <div className="sticky top-0 bg-indigo-600 px-1 text-white text-xs">{key}</div>
                   {
                     value.map(v => (
                       <div className="p-2 border-b" key={v.id}>

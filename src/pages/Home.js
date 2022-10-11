@@ -6,10 +6,10 @@ import { selectUserInfo, getUserInfo } from '../store/user/userSlice';
 import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
 import { db } from '../firebase/firebaseConfig';
 import { deleteAbsence, getAbsencesAddedByUser, updateAbsenceType } from '../store/absences/absencesSlice';
-import { getArrayFromCollection, makeClassTimeHoursReadable, spanishLocale } from '../helpers';
+import { getArrayFromCollection, makeClassTimeHoursReadable, spanishLocale, months } from '../helpers';
 import Modal from '../components/Modal';
 import ReactTooltip from 'react-tooltip';
-import { format } from 'date-fns';
+import { format, getMonth } from 'date-fns';
 
 const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,32 +18,6 @@ const Home = () => {
   const { list: listOfAbsences, loading: absencesLoading } = useSelector((state) => state.absences);
 
   const dispatch = useDispatch();
-
-  // const [student, setStudent] = useState({name: "", secondName: "", lastName: "", secondLastname: ""});
-
-  // const handleOnClick = async () => {
-  //   const {name, secondName, lastName, secondLastname} = student;
-
-  //   const data = {
-  //     absences: {I: 0, J: 0, list: []},
-  //     grade: "8D",
-  //     lastName,
-  //     secondLastname,
-  //     name,
-  //     secondName,
-  //   };
-  //   try {
-  //     await addDoc(collection(db, "students"), data);
-  //     console.log("Successfully added");
-  //   } catch(err) {
-  //     throw new Error(err);
-  //   }
-  // }
-
-  // const handleOnChange = (event) => {
-  //   const { target: { name, value}} = event;
-  //   setStudent({...student, [name]: value});
-  // }
 
   const onCloseModal = () => {
     setAbsenceToDelete(null)
@@ -81,50 +55,65 @@ const Home = () => {
   //   )
   // }
 
+  const absencesListByMonth = listOfAbsences?.reduce((acc, currAbsence) => {
+    const month = getMonth(currAbsence.date);
+    const curr = acc.get(month) ?? [];
+    acc.set(month, [...curr, currAbsence]);
+    return acc;
+  }, new Map());
+
   return (
     <>
     {absencesLoading ? (
-      <div className="w-full h-full flex justify-center items-center absolute top-0 left-0 bg-slate-600 bg-opacity-25">
+      <div className="w-full h-full flex justify-center items-center absolute top-0 left-0 bg-slate-600 bg-opacity-25 z-10">
         <h2 className="text-3xl font-thin tracking-tight text-indigo-600">Cargando...</h2>
       </div>
     ) : null}
-    <div className='w-full h-full text-black p-4 overflow-auto'>
+    <div className='w-full h-full text-black p-4'>
       <h2 className="text-3xl m-[20px] font-bold tracking-tight text-indigo-600 col-span-2 text-center">Mis registros</h2>
-      <div className="grid grid-cols-2 gap-5 h-full">
+
+      <div className="grid grid-cols-2 overflow-auto h-[90%]">
         {
-          listOfAbsences?.map(absence => (
-            <div className="rounded-md bg-white p-4" key={absence.id}>
-              <div className='font-bold pb-2 flex justify-between'>
-                <p>{absence.student}</p>
-                <div className='flex gap-5 items-center font-normal text-xs text-indigo-600'>
-                  <button
-                    className="hover:bg-indigo-600 hover:text-white rounded-sm px-1"
-                    onClick={() => onDeleteClick(absence)}
-                  >Eliminar</button>
-                  <button
-                    onClick={() => dispatch(updateAbsenceType(absence))}
-                    data-tip
-                    data-for="absenceTypeBadge"
-                    className={`${absence.type === "I" ? "text-red-700 bg-red-200" : "text-yellow-700 bg-yellow-200"} rounded-full text-xs px-1 font-bold`}
-                  >
-                    {absence.type === "I" ? "Injustificada" : "Justificada"}
-                  </button>
-                  <ReactTooltip id="absenceTypeBadge" place="top" effect='solid'>
-                    Haga click para cambiar el tipo de la falta.
-                  </ReactTooltip>
-                </div>
-              </div>
-              <div className="flex gap-4 pb-2 text-sm text-gray-500">
-                <p>{absence.grade}</p> <i className='border-r '/>
-                <p>{absence.subject}</p> <i className='border-r '/>
-                <p>{makeClassTimeHoursReadable(absence.classTime)}</p> <i className='border-r '/>
-                <p>{format(absence.date, "iiii, dd LLLL yyyy", { locale: spanishLocale })}</p>
-              </div>
-              <div className='pb-2 border-b text-sm text-gray-500'>
-                <p><span className='text-indigo-400'>Reportado por:</span> {absence.createdBy}</p>
-              </div>
-              <div className="text-sm text-gray-500 pt-2">
-                <p><span className='text-indigo-400'>Motivo:</span> {absence.reason}</p>
+          [...absencesListByMonth].map(([key, value]) => (
+            <div className="relative col-span-2" key={key}>
+              <div className="sticky top-0 bg-indigo-600 px-1 text-white text-xs">{months[key]}</div>
+              <div className='grid grid-cols-2 gap-4'>
+                {value.map((absence) => (
+                  <div className="rounded-md bg-white p-2" key={absence.id}>
+                    <div className='font-bold pb-2 flex justify-between'>
+                      <p>{absence.student}</p>
+                      <div className='flex gap-5 items-center font-normal text-xs text-indigo-600'>
+                        <button
+                          className="hover:bg-indigo-600 hover:text-white rounded-sm px-1"
+                          onClick={() => onDeleteClick(absence)}
+                        >Eliminar</button>
+                        <button
+                          onClick={() => dispatch(updateAbsenceType(absence))}
+                          data-tip
+                          data-for="absenceTypeBadge"
+                          className={`${absence.type === "I" ? "text-red-700 bg-red-200" : "text-yellow-700 bg-yellow-200"} rounded-full text-xs px-1 font-bold`}
+                        >
+                          {absence.type === "I" ? "Injustificada" : "Justificada"}
+                        </button>
+                        <ReactTooltip id="absenceTypeBadge" place="top" effect='solid'>
+                          Haga click para cambiar el tipo de la falta.
+                        </ReactTooltip>
+                      </div>
+                    </div>
+                    <div className="flex gap-4 pb-2 text-sm text-gray-500">
+                      <p>{absence.grade}</p> <i className='border-r '/>
+                      <p>{absence.subject}</p> <i className='border-r '/>
+                      <p>{makeClassTimeHoursReadable(absence.classTime)}</p> <i className='border-r '/>
+                      <p>{format(absence.date, "iiii, dd LLLL yyyy", { locale: spanishLocale })}</p>
+                    </div>
+                    <div className='pb-2 border-b text-sm text-gray-500'>
+                      <p><span className='text-indigo-400'>Reportado por:</span> {absence.createdBy}</p>
+                    </div>
+                    <div className="text-sm text-gray-500 pt-2">
+                      <p><span className='text-indigo-400'>Motivo:</span> {absence.reason}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           ))
