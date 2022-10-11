@@ -88,9 +88,9 @@ const Home = () => {
         <h2 className="text-3xl font-thin tracking-tight text-indigo-600">Cargando...</h2>
       </div>
     ) : null}
-    <div className='w-full h-full text-black p-4'>
+    <div className='w-full h-full text-black p-4 overflow-auto'>
       <h2 className="text-3xl m-[20px] font-bold tracking-tight text-indigo-600 col-span-2 text-center">Mis registros</h2>
-      <div className="grid grid-cols-2 gap-5">
+      <div className="grid grid-cols-2 gap-5 h-full">
         {
           listOfAbsences?.map(absence => (
             <div className="rounded-md bg-white p-4" key={absence.id}>
