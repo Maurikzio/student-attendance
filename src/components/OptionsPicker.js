@@ -1,10 +1,10 @@
 import { useState } from "react";
 
-const OptionsPicker = ({ options, label, onChange }) => {
-  const [optionSelected, setOptionSelected] = useState(null);
+const OptionsPicker = ({ options, label, onChange, optionSelected }) => {
+  // const [optionSelected, setOptionSelected] = useState(null);
 
   const handleOptionClick = (option) => {
-    setOptionSelected(option);
+    // setOptionSelected(option);
     onChange(option);
   }
 

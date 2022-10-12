@@ -2,8 +2,8 @@ import { Fragment, useState } from 'react'
 import { Combobox, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 
-const Select = ({ options, label, onChange }) => {
-  const [selectedOption, setSelectedOption] = useState({})
+const Select = ({ options, label, onChange, selectedOption }) => {
+  // const [selectedOption, setSelectedOption] = useState(selected)
   const [query, setQuery] = useState('')
 
   const filteredPeople =
@@ -17,7 +17,7 @@ const Select = ({ options, label, onChange }) => {
         )
 
   const handleOnChange = (option) => {
-    setSelectedOption(option);
+    // setSelectedOption(option);
     onChange(option);
   }
 

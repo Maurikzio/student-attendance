@@ -56,7 +56,11 @@ const NewRecord = () => {
       type: isUnjustified ? "I" : "J",
     }
 
-    dispatch(createAbsenceRecord(data))
+    dispatch(createAbsenceRecord(data));
+    setStudent(null);
+    setSubject(null);
+    setClassTime(null);
+    setReason("");
   }
 
   useEffect(() => {
@@ -88,16 +92,16 @@ const NewRecord = () => {
       <div className='bg-white rounded-md p-10 grid grid-cols-2 gap-5'>
         <h1 className="text-3xl font-bold tracking-tight text-gray-900 col-span-2 text-center">Registrar Falta</h1>
         <div>
-          <Select options={mappedStudents} label="Estudiante" onChange={(value) => setStudent(value)}/>
+          <Select options={mappedStudents} label="Estudiante" onChange={(value) => setStudent(value)} selectedOption={student}/>
         </div>
         <div>
-          <Select options={mappedSubjects} label="Materia" onChange={(value) => setSubject(value)}/>
+          <Select options={mappedSubjects} label="Materia" onChange={(value) => setSubject(value)} selectedOption={subject}/>
         </div>
         <div>
           <DatePicker label="Fecha" onChange={(value) => setDate(value)} date={date}/>
         </div>
         <div>
-          <OptionsPicker options={classTimesOptions} label="Hora de clase" onChange={(value) => setClassTime(value)}/>
+          <OptionsPicker options={classTimesOptions} label="Hora de clase" onChange={(value) => setClassTime(value)} optionSelected={classTime}/>
         </div>
         <div>
           <Toggle
@@ -126,7 +130,8 @@ const NewRecord = () => {
           </div>
         </div>
         <button
-          className="col-span-2 rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          disabled={!student || !subject || !date || !classTime || !reason}
+          className="col-span-2 rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm enabled:hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:bg-gray-400"
           onClick={handleOnClick}
         >Registrar</button>
       </div>

@@ -10,4 +10,10 @@ module.exports = {
     require('@tailwindcss/forms'),
     require('@headlessui/tailwindcss')
   ],
+  variants: {
+    extend: {
+      backgroundColor: ['disabled'],
+      textColor: ['disabled'],
+    }
+  }
 }
