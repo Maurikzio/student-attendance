@@ -72,8 +72,8 @@ const StudentInfo = () => {
             ) : null}
           </div>
 
-          <div className="w-full h-[70%] block bg-white rounded-md overflow-auto relative">
-            {
+          <div className="w-full h-[70%] bg-white rounded-md overflow-auto relative">
+            {absencesList.size > 0 ? (
               [...absencesList].map(([key, value]) => (
                 <div className="relative" key={key}>
                   <div className="sticky top-0 bg-indigo-600 px-1 text-white text-xs">{key}</div>
@@ -96,7 +96,11 @@ const StudentInfo = () => {
                   }
                 </div>
               ))
-            }
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <p className="text-2xl text-gray-500">No faltas registradas</p>
+              </div>
+            )}
           </div>
         </div>
 
