@@ -82,7 +82,7 @@ const Home = () => {
               <div className="sticky top-0 bg-indigo-600 px-1 text-white text-xs">{months[key]}</div>
               <div className='grid grid-cols-2 gap-4'>
                 {value.map((absence) => (
-                  <div className="rounded-md bg-white p-2" key={absence.id} onClick={() => console.log(absence)}>
+                  <div className="rounded-md bg-white p-2" key={absence.id}>
                     <div className='font-bold pb-2 flex justify-between'>
                       <Link to={`/estudiante/${absence.grade}/${absence.studentId}`}>{absence.student}</Link>
                       <div className='flex gap-5 items-center font-normal text-xs text-indigo-600'>

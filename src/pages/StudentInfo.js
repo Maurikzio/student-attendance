@@ -1,8 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useState} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { getStudentInfo } from "../store/students/studentsSlice";
-import { getAbsencesOfStudent } from "../store/absences/absencesSlice";
 import { getSubjects } from "../store/subjects/subjectsSlice";
 import { format } from "date-fns";
 import { spanishLocale, makeClassTimeHoursReadable } from "../helpers";
@@ -13,6 +12,7 @@ const StudentInfo = () => {
   const params = useParams();
   const {loading: studentsLoading, studentInfo, studentAbsences = []} = useSelector((state) => state.students);
   const {loading: loadingSubjects, list: subjectsList} = useSelector((state) => state.subjects);
+  const [selectedSubject, setSelectedSubject] = useState("");
 
   const dispatch = useDispatch();
 
@@ -27,7 +27,10 @@ const StudentInfo = () => {
     dispatch(getSubjects())
   }, []);
 
-  // const absencesList = studentAbsences.map(ab => format(ab.date, "LLLL", {locale: spanishLocale}));
+
+  const onClickSubject = (subjectId) => {
+    setSelectedSubject(selectedSubject === subjectId ? "" : subjectId)
+  }
 
   const absencesList = studentAbsences.reduce((acc, currentItem) => {
     const month = format(currentItem.date, "LLLL", {locale: spanishLocale});
@@ -63,11 +66,11 @@ const StudentInfo = () => {
                   <p className="text-xl font-thin">Injustificadas: <span className="px-2 rounded-md font-normal">{studentInfo.absences.I}</span></p>
                   <p className="text-xl font-thin">Justificadas: <span className="px-2 rounded-md font-normal">{studentInfo.absences.J}</span></p>
                 </div>
-              </div> 
+              </div>
             ) : null}
             {absencesBySubject.length ? (
               <div className="grow text-sm">
-                {absencesBySubject.map(subject => <Subject subject={subject} key={subject.id}/>)}
+                {absencesBySubject.map(subject => <Subject subject={subject} key={subject.id} onClickSubject={onClickSubject} selectedSubject={selectedSubject}/>)}
               </div>
             ) : null}
           </div>
@@ -79,7 +82,7 @@ const StudentInfo = () => {
                   <div className="sticky top-0 bg-indigo-600 px-1 text-white text-xs">{key}</div>
                   {
                     value.map(v => (
-                      <div className="p-2 border-b" key={v.id}>
+                      <div className={`p-2 border-b ${selectedSubject === v.subjectId ? 'bg-indigo-100' : ''}`} key={v.id} onClick={() => console.log(v)}>
                         <p className="">
                           {format(v.date, "iiii, dd LLLL yyyy", {locale: spanishLocale})}
                         </p>
