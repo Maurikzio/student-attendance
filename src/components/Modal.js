@@ -37,12 +37,12 @@ const Modal = ({ title, contentText,  yesText, noText, onYesButton, isOpen, clos
               <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                 <Dialog.Title
                   as="h3"
-                  className="text-lg font-medium leading-6 text-gray-900"
+                  className="text-xl font-medium leading-6 text-gray-900"
                 >
                   {title}
                 </Dialog.Title>
-                <div className="mt-2">
-                  <p className="text-sm text-gray-500">
+                <div className="mt-4">
+                  <p className="text-gray-500">
                     {contentText}
                   </p>
                 </div>

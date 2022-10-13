@@ -11,6 +11,7 @@ import Modal from '../components/Modal';
 import ReactTooltip from 'react-tooltip';
 import { differenceInBusinessDays, format, getMonth } from 'date-fns';
 import { addDays } from 'date-fns/esm';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -81,9 +82,9 @@ const Home = () => {
               <div className="sticky top-0 bg-indigo-600 px-1 text-white text-xs">{months[key]}</div>
               <div className='grid grid-cols-2 gap-4'>
                 {value.map((absence) => (
-                  <div className="rounded-md bg-white p-2" key={absence.id}>
+                  <div className="rounded-md bg-white p-2" key={absence.id} onClick={() => console.log(absence)}>
                     <div className='font-bold pb-2 flex justify-between'>
-                      <p>{absence.student}</p>
+                      <Link to={`/estudiante/${absence.grade}/${absence.studentId}`}>{absence.student}</Link>
                       <div className='flex gap-5 items-center font-normal text-xs text-indigo-600'>
                         <button
                           disabled={!absence.isEditable}
@@ -131,8 +132,8 @@ const Home = () => {
     <Modal
       isOpen={isModalOpen}
       closeModal={onCloseModal}
-      title="Desea eliminar registro?"
-      contentText="Este proceso es irreversible, no se podrán recuperar los datos asociados a este registro y de continuar se modificarán las estadíticas del estudiante relacionado con este registro. "
+      title="¿Desea eliminar registro?"
+      contentText="Este proceso es irreversible, no se podrán recuperar los datos asociados a este registro y de continuar se modificarán las estadíticas del estudiante."
       yesText="Si, continuar!"
       noText="No"
       onYesButton={onYesButtonClick}
