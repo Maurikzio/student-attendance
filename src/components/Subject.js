@@ -6,11 +6,11 @@ const Subject = ({ subject }) => {
   let bgClassnames = "bg-white";
 
   if(subject.absences >= sixPercentage && subject.absences < eigthPercentage) {
-    bgClassnames = "bg-green-700";
+    bgClassnames = "bg-green-500";
   }else if(subject.absences >= eigthPercentage && subject.absences < tenPercentage) {
-    bgClassnames = "bg-yellow-700";
+    bgClassnames = "bg-yellow-400";
   }else if(subject.absences >= tenPercentage) {
-    bgClassnames = "bg-red-700";
+    bgClassnames = "bg-red-600";
   }
 
   return (

@@ -9,7 +9,8 @@ import { deleteAbsence, getAbsencesAddedByUser, updateAbsenceType } from '../sto
 import { getArrayFromCollection, makeClassTimeHoursReadable, spanishLocale, months } from '../helpers';
 import Modal from '../components/Modal';
 import ReactTooltip from 'react-tooltip';
-import { format, getMonth } from 'date-fns';
+import { differenceInBusinessDays, format, getMonth } from 'date-fns';
+import { addDays } from 'date-fns/esm';
 
 const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -58,7 +59,8 @@ const Home = () => {
   const absencesListByMonth = listOfAbsences?.reduce((acc, currAbsence) => {
     const month = getMonth(currAbsence.date);
     const curr = acc.get(month) ?? [];
-    acc.set(month, [...curr, currAbsence]);
+    const isEditable =  differenceInBusinessDays(addDays(new Date(currAbsence.date), 2), new Date()) >= 0;
+    acc.set(month, [...curr, {...currAbsence, isEditable}]);
     return acc;
   }, new Map());
 
@@ -84,14 +86,16 @@ const Home = () => {
                       <p>{absence.student}</p>
                       <div className='flex gap-5 items-center font-normal text-xs text-indigo-600'>
                         <button
-                          className="hover:bg-indigo-600 hover:text-white rounded-sm px-1"
+                          disabled={!absence.isEditable}
+                          className="enabled:hover:bg-indigo-600 enabled:hover:text-white rounded-sm px-1 disabled:opacity-75"
                           onClick={() => onDeleteClick(absence)}
                         >Eliminar</button>
                         <button
+                          disabled={!absence.isEditable}
                           onClick={() => dispatch(updateAbsenceType(absence))}
                           data-tip
                           data-for="absenceTypeBadge"
-                          className={`${absence.type === "I" ? "text-red-700 bg-red-200" : "text-yellow-700 bg-yellow-200"} rounded-full text-xs px-1 font-bold`}
+                          className={`${absence.type === "I" ? "text-red-700 bg-red-200" : "text-yellow-700 bg-yellow-200"} rounded-full text-xs px-1 font-bold disabled:opacity-75`}
                         >
                           {absence.type === "I" ? "Injustificada" : "Justificada"}
                         </button>
