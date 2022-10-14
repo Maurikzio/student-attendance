@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { createAbsenceRecord } from '../store/absences/absencesSlice';
-import { getStudentsOfUser } from '../store/students/studentsSlice';
+import { getStudentsByGrade, getStudentsOfUser } from '../store/students/studentsSlice';
 import { getSubjects } from '../store/subjects/subjectsSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import DatePicker from '../components/DatePicker/DatePicker';
 import OptionsPicker from '../components/OptionsPicker';
 import Select from '../components/Select';
 import Toggle from '../components/Toggle';
+import { gradeLetters, grades } from '../helpers';
 
 const NewRecord = () => {
   const [student, setStudent] = useState(null);
@@ -15,15 +16,13 @@ const NewRecord = () => {
   const [classTime, setClassTime] = useState(null);
   const [isUnjustified, setIsUnjustified] = useState(true);
   const [reason, setReason] = useState("");
+  const [selectedGrade, setSelectedGrade] = useState("");
+  const [gradeLetter, setGradeLetter] = useState("");
 
   const { userId, userInfo } = useSelector((state) => state.user);
   const { loading: loadingSubjects, list: subjectsList } = useSelector((state) => state.subjects);
   const { loading: loadingStudents, list: studentsList } = useSelector((state) => state.students);
   const dispatch = useDispatch();
-
-  const mappedStudents = studentsList?.map(({id, name, secondName, lastname, secondLastname, grade}) => ({ id, value: `${lastname} ${secondLastname} ${name} ${secondName}`, grade}));
-
-  const mappedSubjects = subjectsList?.map(({ id, subjectName }) => ({id, value: subjectName}));
 
   const classTimesOptions = [
     {id: "CT1", value: 1},
@@ -63,23 +62,33 @@ const NewRecord = () => {
     setReason("");
   }
 
+  const onSelectGrade = (grade) => {
+    setSelectedGrade(grade);
+    setGradeLetter("");
+  }
+
   useEffect(() => {
     dispatch(getSubjects());
   }, [])
 
   useEffect(() => {
-    if(userInfo) {
+    if(userInfo?.tutorOf) {
       dispatch(getStudentsOfUser(userInfo.tutorOf));
+    } else if(userInfo?.role === "inspector" && selectedGrade) {
+      dispatch(getStudentsByGrade(selectedGrade.id))
     }
-  }, [userInfo, dispatch]);
+  }, [userInfo, dispatch, selectedGrade]);
 
-  // if(loadingSubjects || loadingStudents) {
-  //   return (
-  //     <div className="w-full h-full bg-slate-100 flex justify-center items-center">
-  //       <h2 className="text-3xl font-thin tracking-bold text-indigo-600">Cargando...</h2>
-  //     </div>
-  //   )
-  // }
+  const mappedStudents = studentsList?.reduce((acc, student) => {
+    if(student.grade.includes(gradeLetter?.id || "")) {
+      acc.push({id: student.id, value: `${student.lastname} ${student.secondLastname} ${student.name} ${student.secondName}`, grade: student.grade});
+    }
+    return acc;
+  }, []);
+
+  const mappedSubjects = subjectsList?.map(({ id, subjectName }) => ({id, value: subjectName}));
+
+  const gradeLettersForGradeSelected = !selectedGrade ? gradeLetters : gradeLetters.filter((gradeLetter) => gradeLetter.grades.includes(selectedGrade?.id));
 
   return (
     <>
@@ -91,6 +100,22 @@ const NewRecord = () => {
     <div className='w-full h-full text-black p-4 flex items-center justify-center content-center'>
       <div className='bg-white rounded-md p-10 grid grid-cols-2 gap-5'>
         <h1 className="text-3xl font-bold tracking-tight text-gray-900 col-span-2 text-center">Registrar Falta</h1>
+        <div>
+          <OptionsPicker
+            options={grades}
+            label="Curso"
+            optionSelected={selectedGrade}
+            onChange={onSelectGrade}
+          />
+        </div>
+        <div>
+          <OptionsPicker
+            options={gradeLettersForGradeSelected}
+            label="Paralelo"
+            onChange={(value) => setGradeLetter(value.id === gradeLetter.id ? "" : value)}
+            optionSelected={gradeLetter}
+          />
+        </div>
         <div>
           <Select options={mappedStudents} label="Estudiante" onChange={(value) => setStudent(value)} selectedOption={student}/>
         </div>

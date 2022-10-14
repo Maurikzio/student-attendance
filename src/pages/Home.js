@@ -5,17 +5,20 @@ import { getSubjects, selectSubjects } from '../store/subjects/subjectsSlice';
 import { selectUserInfo, getUserInfo } from '../store/user/userSlice';
 import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
 import { db } from '../firebase/firebaseConfig';
-import { deleteAbsence, getAbsencesAddedByUser, updateAbsenceType } from '../store/absences/absencesSlice';
-import { getArrayFromCollection, makeClassTimeHoursReadable, spanishLocale, months } from '../helpers';
+import { deleteAbsence, getAbsencesAddedByUser, getAbsencesByGrade, updateAbsenceType } from '../store/absences/absencesSlice';
+import { getArrayFromCollection, makeClassTimeHoursReadable, spanishLocale, months, gradeLetters, grades } from '../helpers';
 import Modal from '../components/Modal';
 import ReactTooltip from 'react-tooltip';
 import { differenceInBusinessDays, format, getMonth } from 'date-fns';
 import { addDays } from 'date-fns/esm';
 import { Link } from 'react-router-dom';
+import OptionsPicker from '../components/OptionsPicker';
 
 const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [absenceToDelete, setAbsenceToDelete] = useState(null);
+  const [selectedGrade, setSelectedGrade] = useState({id: 8, value: "Octavo"});
+  const [gradeLetter, setGradeLetter] = useState("");
   const userInfo = useSelector(selectUserInfo);
   const { list: listOfAbsences, loading: absencesLoading } = useSelector((state) => state.absences);
 
@@ -43,27 +46,32 @@ const Home = () => {
     setIsModalOpen(true);
   }
 
-  useEffect(() => {
-    if (userInfo) {
-      dispatch(getAbsencesAddedByUser(userInfo.tutorOf))
-    }
-  }, [userInfo, dispatch]);
+  const onSelectGrade = (grade) => {
+    setSelectedGrade(grade);
+    setGradeLetter("");
+    // dispatch(getAbsencesByGrade(grade.id))
+  }
 
-  // if (absencesLoading) {
-  //   return (
-  //     <div className="w-full h-full bg-transparent flex justify-center items-center">
-  //       <h2 className="text-3xl font-thin tracking-tight text-indigo-600">Cargando...</h2>
-  //     </div>
-  //   )
-  // }
+  useEffect(() => {
+    if (userInfo?.tutorOf) {
+      dispatch(getAbsencesAddedByUser(userInfo.tutorOf))
+    } else if(userInfo?.role === "inspector" && selectedGrade) {
+      dispatch(getAbsencesByGrade(selectedGrade.id))
+    }
+  }, [userInfo, dispatch, selectedGrade]);
+
 
   const absencesListByMonth = listOfAbsences?.reduce((acc, currAbsence) => {
-    const month = getMonth(currAbsence.date);
-    const curr = acc.get(month) ?? [];
-    const isEditable =  differenceInBusinessDays(addDays(new Date(currAbsence.date), 2), new Date()) >= 0;
-    acc.set(month, [...curr, {...currAbsence, isEditable}]);
+    if(currAbsence.grade.includes(gradeLetter?.id || "")) {
+      const month = getMonth(currAbsence.date);
+      const curr = acc.get(month) ?? [];
+      const isEditable =  differenceInBusinessDays(addDays(new Date(currAbsence.date), 2), new Date()) >= 0;
+      acc.set(month, [...curr, {...currAbsence, isEditable}]);
+    }
     return acc;
   }, new Map());
+
+  const gradeLettersForGradeSelected = gradeLetters.filter((gradeLetter) => gradeLetter.grades.includes(selectedGrade.id));
 
   return (
     <>
@@ -73,13 +81,28 @@ const Home = () => {
       </div>
     ) : null}
     <div className='w-full h-full text-black p-4'>
-      <h2 className="text-3xl m-[20px] font-bold tracking-tight text-indigo-600 col-span-2 text-center">Mis registros</h2>
+      {
+        userInfo?.role === "inspector" ? (
+          <div className='flex justify-center mb-2'>
+            <div className='flex items-center justify-center gap-4 rounded-md bg-white p-2'>
+              <div>
+                <OptionsPicker options={grades} onChange={onSelectGrade} optionSelected={selectedGrade}/>
+              </div>
+              <div className='w-[190px]'>
+                <OptionsPicker options={gradeLettersForGradeSelected} onChange={(value) => setGradeLetter(value.id === gradeLetter.id ? "" : value)} optionSelected={gradeLetter}/>
+            </div>
+            </div>
+          </div>
+        ) : (
+          <h2 className="text-3xl mb-[20px] font-bold tracking-tight text-indigo-600 col-span-2 text-center">Mis registros</h2>
+        )
+      }
 
-      <div className="grid grid-cols-2 overflow-auto h-[90%]">
+      <div className="grid grid-cols-2 overflow-auto h-[92%]">
         {absencesListByMonth.size > 0 ? (
           [...absencesListByMonth].map(([key, value]) => (
             <div className="relative col-span-2" key={key}>
-              <div className="sticky top-0 bg-indigo-600 px-1 text-white text-xs">{months[key]}</div>
+              <div className="sticky top-0 bg-indigo-100 px-1 text-indigo-600 text-xs">{months[key]}</div>
               <div className='grid grid-cols-2 gap-4'>
                 {value.map((absence) => (
                   <div className="rounded-md bg-white p-2" key={absence.id}>
@@ -124,7 +147,7 @@ const Home = () => {
           ))
         ) : (
           <div className='flex items-center justify-center col-span-2'>
-            <p className='text-2xl text-gray-500'>No ha registrado faltas</p>
+            <p className='text-2xl text-gray-500'>No se han registrado faltas</p>
           </div>
         )}
       </div>

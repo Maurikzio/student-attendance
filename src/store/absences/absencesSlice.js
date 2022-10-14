@@ -17,8 +17,6 @@ export const createAbsenceRecord = createAsyncThunk(
   "absences/createAbsence",
   async (data) => {
     try{
-      //TODO: update this when adding inspector logic
-
       /* create the new absence record */
       const grade = data.grade.replace(/[A-Z]/g, "");
       const createdRecordRef = await addDoc(collection(db, `absences${grade}`), data);
@@ -42,8 +40,6 @@ export const createAbsenceRecord = createAsyncThunk(
 export const getAbsencesAddedByUser = createAsyncThunk(
   "absences/getAbsencesByUser",
   async (data) => {
-    //TODO: update this when adding inspector logic
-
     const grade = data.replace(/[A-Z]/g, "");
     const gradeLetter = data.replace(/[0-9]/g, "");
     try {
@@ -53,6 +49,21 @@ export const getAbsencesAddedByUser = createAsyncThunk(
       return listOfAbsences;
     } catch (err) {
       throw new Error(err);
+    }
+  }
+)
+
+export const getAbsencesByGrade = createAsyncThunk(
+  "absences/getAbsencesByGrade",
+  async (grade) => {
+    try {
+      const colRef = collection(db, `absences${grade}`);
+      const docsSnap = await getDocs(colRef);
+      const listOfAbsences = getArrayFromCollection(docsSnap).sort((a, b) => b.date - a.date);
+      return listOfAbsences;
+    } catch (err) {
+      toast.error("No se ha podido obtener los registros", { bodyClassName: "bg-rose-50", className: "!bg-rose-50 text-white"});
+      return err;
     }
   }
 )
@@ -168,19 +179,19 @@ export const absencesSlice = createSlice({
         state.loading = false;
         state.error = action.payload
       })
-      // .addCase(getAbsencesOfStudent.pending, (state, action) => {
-      //   state.loading = true;
-      //   state.error = null
-      // })
-      // .addCase(getAbsencesOfStudent.fulfilled, (state, action) => {
-      //   state.loading = false;
-      //   state.success = true;
-      //   state.list = action.payload;
-      // })
-      // .addCase(getAbsencesOfStudent.rejected, (state, action) => {
-      //   state.loading = false;
-      //   state.error = action.payload
-      // })
+      .addCase(getAbsencesByGrade.pending, (state, action) => {
+        state.loading = true;
+        state.error = null
+      })
+      .addCase(getAbsencesByGrade.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.list = action.payload;
+      })
+      .addCase(getAbsencesByGrade.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload
+      })
       .addCase(deleteAbsence.pending, (state, action) => {
         state.loading = true;
         state.error = null

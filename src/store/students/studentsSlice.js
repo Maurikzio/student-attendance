@@ -5,8 +5,6 @@ import { db } from "../../firebase/firebaseConfig";
 import { getArrayFromCollection, spanishLocale } from "../../helpers";
 import { toast } from 'react-toastify';
 import { getAbsencesOfStudent } from "../absences/absencesSlice";
-import { format } from "date-fns";
-import { bg } from "date-fns/locale";
 
 const initialState = {
   loading: false,
@@ -30,6 +28,21 @@ export const getStudentsOfUser = createAsyncThunk(
       return listOfStudents;
     } catch (err) {
       throw new Error(err);
+    }
+  }
+)
+
+export const getStudentsByGrade = createAsyncThunk(
+  "students/getStudentByGrade",
+  async (grade) => {
+    try {
+      const colRef = collection(db, `students${grade}`);
+      const docsSnap = await getDocs(colRef);
+      const listOfStudents = getArrayFromCollection(docsSnap).sort((a, b) => a.lastname.localeCompare(b.lastname, 'es', {sensitivity: 'base'}));
+      return listOfStudents;
+    } catch (err) {
+      toast.error("No se ha podido obtener los estudiantes", { bodyClassName: "bg-rose-50", className: "!bg-rose-50 text-white"});
+      return err;
     }
   }
 )
@@ -78,6 +91,19 @@ export const studentsSlice = createSlice({
         state.list = action.payload;
       })
       .addCase(getStudentsOfUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(getStudentsByGrade.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getStudentsByGrade.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.list = action.payload;
+      })
+      .addCase(getStudentsByGrade.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

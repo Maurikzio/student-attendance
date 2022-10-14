@@ -1,43 +1,57 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getStudentsOfUser } from '../store/students/studentsSlice';
+import { getStudentsByGrade, getStudentsOfUser } from '../store/students/studentsSlice';
 import { selectUserInfo } from "../store/user/userSlice";
 import DownloadCSV from "../components/DownloadCSV/DownloadCSV";
 import Table from "../components/Table";
 import { createColumnHelper } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
+import OptionsPicker from "../components/OptionsPicker";
+import { gradeLetters, grades } from "../helpers";
 
 
 const Students = () => {
+  const [selectedGrade, setSelectedGrade] = useState({id: 8, value: "Octavo"});
+  const [gradeLetter, setGradeLetter] = useState("");
   const userInfo = useSelector(selectUserInfo);
   const {loading: studentsLoading, list: studentsList} = useSelector((state) => state.students);
   const dispatch = useDispatch();
 
+  const onSelectGrade = (grade) => {
+    setSelectedGrade(grade);
+    setGradeLetter("");
+  }
+
   useEffect(() => {
-    if(userInfo) {
+    if(userInfo?.tutorOf) {
       dispatch(getStudentsOfUser(userInfo.tutorOf));
+    } else if  (userInfo?.role === "inspector" && selectedGrade) {
+      dispatch(getStudentsByGrade(selectedGrade.id));
     }
-  }, [userInfo, dispatch]);
+  }, [userInfo, dispatch, selectedGrade]);
 
   const headersForCSV = [
     {label: "Estudiante", key: "student"},
     {label: "Curso", key: "grade"},
     {label: "Justificadas", key: "justified"},
-    {label: "Inustificadas", key: "unjustified"},
+    {label: "Injustificadas", key: "unjustified"},
     {label: "Total de faltas", key: "totalAbsences"},
-  ]
+  ];
 
-  const dataForTable = studentsList.map((student) => {
-    const {absences, grade, name, secondName, lastname, secondLastname, id} = student;
-    return {
-      student: `${lastname} ${secondLastname} ${name} ${secondName}`,
-      grade,
-      justified: absences.J,
-      unjustified: absences.I,
-      totalAbsences: absences.list.length,
-      studentId: id,
+  const dataForTable = studentsList?.reduce((acc, student) => {
+    if(student.grade.includes(gradeLetter?.id || "")) {
+      const {absences, grade, name, secondName, lastname, secondLastname, id} = student;
+      acc.push({
+        student: `${lastname} ${secondLastname} ${name} ${secondName}`,
+        grade,
+        justified: absences.J,
+        unjustified: absences.I,
+        totalAbsences: absences.list.length,
+        studentId: id,
+      });
     }
-  })
+    return acc;
+  }, []);
 
   const columnHelper = createColumnHelper();
 
@@ -79,13 +93,7 @@ const Students = () => {
     }),
   ];
 
-  // if (studentsLoading) {
-  //   return (
-  //     <div className="w-full h-full bg-slate-100 flex justify-center items-center">
-  //       <h2 className="text-3xl font-thin tracking-tight text-indigo-600">Cargando...</h2>
-  //     </div>
-  //   )
-  // }
+  const gradeLettersForGradeSelected = gradeLetters.filter((gradeLetter) => gradeLetter.grades.includes(selectedGrade.id));
 
   return (
     <>
@@ -96,8 +104,19 @@ const Students = () => {
     ) : null}
     <div className="w-full text-black p-4 h-full max-h-full">
       <div className="bg-white rounded-md p-4 flex flex-col h-full overflow-auto">
-        <div className="ml-auto">
-          <DownloadCSV data={dataForTable} headers={headersForCSV} filename="students"/>
+        <div className="flex">
+          <div className="flex gap-4">
+            <div>
+              <OptionsPicker options={grades} size="sm" onChange={onSelectGrade} optionSelected={selectedGrade}/>
+            </div>
+            <div>
+              <OptionsPicker options={gradeLettersForGradeSelected} size="sm" onChange={(value) => setGradeLetter(value.id === gradeLetter.id ? "" : value)} optionSelected={gradeLetter}/>
+            </div>
+          </div>
+
+          <div className="ml-auto">
+            <DownloadCSV data={dataForTable} headers={headersForCSV} filename="students"/>
+          </div>
         </div>
         <div className="px-[40px]">
           <Table data={dataForTable} columns={columns}/>

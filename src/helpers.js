@@ -8,6 +8,19 @@ const dayValues = {
 // const days = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa']
 export const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
 
+export const grades = [
+  {id: 8, value: "Octavo"},
+  {id: 9, value: "Noveno"},
+  {id: 10, value: "Décimo"},
+];
+
+export const gradeLetters = [
+  {id: "A", value: "A", grades: [8, 9, 10]},
+  {id: "B", value: "B", grades: [8, 9, 10]},
+  {id: "C", value: "C", grades: [8, 9, 10]},
+  {id: "D", value: "D", grades: [8, 9]}
+];
+
 export const spanishLocale = {
   localize: {
     // day: n => days[n],

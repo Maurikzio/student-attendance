@@ -24,8 +24,8 @@ const Layout = ({children }) => {
       <aside className="w-64 h-full" aria-label="Sidebar">
         <div className="h-full w-64 py-4 px-3 bg-gray-50 dark:bg-gray-800 flex flex-col">
             {userInfo ? (<div className="p-2 text-white h-24">
-              <h2>{`${userInfo.name} ${userInfo.lastname}`}</h2>
-              <h3>{userInfo.tutorOf}</h3>
+              <h2 className="text-xl">{`${userInfo.name} ${userInfo.lastname}`}</h2>
+              <h3>{userInfo.role === "inspector" ? "Inspector" : `Tutor de ${userInfo.tutorOf}`}</h3>
             </div>) : null}
             <ul className="space-y-2 border-t dark:border-gray-700 pt-4">
               <li>
