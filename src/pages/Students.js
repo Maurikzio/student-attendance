@@ -98,7 +98,7 @@ const Students = () => {
   return (
     <>
     {studentsLoading ? (
-      <div className="w-full h-full flex justify-center items-center absolute top-0 left-0 bg-slate-600 bg-opacity-25">
+      <div className="w-full h-full flex justify-center items-center absolute top-0 left-0 bg-slate-600 bg-opacity-25 backdrop-blur-sm">
         <h2 className="text-3xl font-thin tracking-tight text-indigo-600">Cargando...</h2>
       </div>
     ) : null}
