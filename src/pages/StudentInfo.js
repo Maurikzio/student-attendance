@@ -82,7 +82,7 @@ const StudentInfo = () => {
                   <div className="sticky top-0 bg-indigo-600 px-1 text-white text-xs">{key}</div>
                   {
                     value.map(v => (
-                      <div className={`p-2 border-b ${selectedSubject === v.subjectId ? 'bg-indigo-100' : ''}`} key={v.id} onClick={() => console.log(v)}>
+                      <div className={`p-2 border-b ${selectedSubject === v.subjectId ? 'bg-indigo-100' : ''}`} key={v.id}>
                         <p className="">
                           {format(v.date, "iiii, dd LLLL yyyy", {locale: spanishLocale})}
                         </p>
