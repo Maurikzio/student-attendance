@@ -105,15 +105,16 @@ const Students = () => {
     <div className="w-full text-black p-4 h-full max-h-full">
       <div className="bg-white rounded-md p-4 flex flex-col h-full overflow-auto">
         <div className="flex">
-          <div className="flex gap-4">
-            <div>
-              <OptionsPicker options={grades} size="sm" onChange={onSelectGrade} optionSelected={selectedGrade}/>
+          {userInfo?.role === "inspector" ? (
+            <div className="flex gap-4">
+              <div>
+                <OptionsPicker options={grades} size="sm" onChange={onSelectGrade} optionSelected={selectedGrade}/>
+              </div>
+              <div>
+                <OptionsPicker options={gradeLettersForGradeSelected} size="sm" onChange={(value) => setGradeLetter(value.id === gradeLetter.id ? "" : value)} optionSelected={gradeLetter}/>
+              </div>
             </div>
-            <div>
-              <OptionsPicker options={gradeLettersForGradeSelected} size="sm" onChange={(value) => setGradeLetter(value.id === gradeLetter.id ? "" : value)} optionSelected={gradeLetter}/>
-            </div>
-          </div>
-
+          ) : null}
           <div className="ml-auto">
             <DownloadCSV data={dataForTable} headers={headersForCSV} filename="students"/>
           </div>

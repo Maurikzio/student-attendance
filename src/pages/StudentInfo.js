@@ -86,10 +86,10 @@ const StudentInfo = () => {
                         <p className="">
                           {format(v.date, "iiii, dd LLLL yyyy", {locale: spanishLocale})}
                         </p>
-                        <div className="text-sm flex gap-4 text-gray-500">
-                          <p>{makeClassTimeHoursReadable(v.classTime)}</p> <i className='border-r '/>
-                          <p>{v.subject}</p> <i className='border-r '/>
-                          <p className={`${v.type === "I" ? 'text-red-700 bg-red-200' : 'text-yellow-700 bg-yellow-200' } rounded-full px-1`}>
+                        <div className="text-sm flex gap-4 text-gray-500 items-start">
+                          <p className="shrink-0">{makeClassTimeHoursReadable(v.classTime)}</p> <i className='border-r'/>
+                          <p className="shrink-0">{v.subject}</p> <i className='border-r '/>
+                          <p className={`${v.type === "I" ? 'text-red-700 bg-red-200' : 'text-yellow-700 bg-yellow-200' } rounded-full px-1 shrink-0`}>
                             {v.type === "I" ? "Injustificada" : "Justificada"}
                           </p> <i className='border-r '/>
                           <p><span className="text-indigo-400">Motivo:</span> {v.reason}</p>

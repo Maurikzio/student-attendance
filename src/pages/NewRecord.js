@@ -100,22 +100,26 @@ const NewRecord = () => {
     <div className='w-full h-full text-black p-4 flex items-center justify-center content-center'>
       <div className='bg-white rounded-md p-10 grid grid-cols-2 gap-5'>
         <h1 className="text-3xl font-bold tracking-tight text-gray-900 col-span-2 text-center">Registrar Falta</h1>
-        <div>
-          <OptionsPicker
-            options={grades}
-            label="Curso"
-            optionSelected={selectedGrade}
-            onChange={onSelectGrade}
-          />
-        </div>
-        <div>
-          <OptionsPicker
-            options={gradeLettersForGradeSelected}
-            label="Paralelo"
-            onChange={(value) => setGradeLetter(value.id === gradeLetter.id ? "" : value)}
-            optionSelected={gradeLetter}
-          />
-        </div>
+        {userInfo?.role === "inspector" ? (
+          <>
+            <div>
+              <OptionsPicker
+                options={grades}
+                label="Curso"
+                optionSelected={selectedGrade}
+                onChange={onSelectGrade}
+              />
+            </div>
+            <div>
+              <OptionsPicker
+                options={gradeLettersForGradeSelected}
+                label="Paralelo"
+                onChange={(value) => setGradeLetter(value.id === gradeLetter.id ? "" : value)}
+                optionSelected={gradeLetter}
+              />
+            </div>
+          </>
+        ): null}
         <div>
           <Select options={mappedStudents} label="Estudiante" onChange={(value) => setStudent(value)} selectedOption={student}/>
         </div>

@@ -16,7 +16,7 @@ const initialState = {
 }
 
 export const getStudentsOfUser = createAsyncThunk(
-  "students/getUserStudents",
+  "students/getStudentsOfUser",
   async (data) => {
     const grade = data.replace(/[A-Z]/g, "");
     const gradeLetter = data.replace(/[0-9]/g, "");
