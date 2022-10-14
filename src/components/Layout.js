@@ -22,12 +22,12 @@ const Layout = ({children }) => {
         </div>
       ) : null}
       <aside className="w-64 h-full" aria-label="Sidebar">
-        <div className="h-full w-64 py-4 px-3 bg-gray-50 dark:bg-gray-800 flex flex-col">
+        <div className="h-full w-64 py-4 px-3 bg-gray-50 dark:bg-zinc-700 flex flex-col">
             {userInfo ? (<div className="p-2 text-white h-24">
-              <h2 className="text-xl">{`${userInfo.name} ${userInfo.lastname}`}</h2>
+              <h2 className="text-xl font-bold mb-2">{`${userInfo.name} ${userInfo.lastname}`}</h2>
               <h3>{userInfo.role === "inspector" ? "Inspector" : `Tutor de ${userInfo.tutorOf}`}</h3>
             </div>) : null}
-            <ul className="space-y-2 border-t dark:border-gray-700 pt-4">
+            <ul className="space-y-2 border-t dark:border-zinc-500 pt-4">
               <li>
                   <SidebarLink to={"/"}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">
@@ -95,7 +95,7 @@ const Layout = ({children }) => {
                   </a>
               </li>
             </ul> */}
-            <div className="border-t dark:border-gray-700 pt-4 mt-auto">
+            <div className="border-t dark:border-zinc-500 pt-4 mt-auto">
               <button
                 className="inline-flex justify-center w-full rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 onClick={() => dispatch(logoutUser())}
