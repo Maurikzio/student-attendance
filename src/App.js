@@ -1,13 +1,8 @@
-import { onAuthStateChanged } from "firebase/auth";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Register from "./components/Register";
-import { auth } from "./firebase/firebaseConfig";
-import { logoutUser } from "./store/user/userSlice";
+// import Register from "./components/Register";
 import Students from "./pages/Students";
 import NotFound from "./components/NotFound";
 import NewRecord from "./pages/NewRecord";
@@ -16,10 +11,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import StudentInfo from "./pages/StudentInfo";
 
 export default function App() {
-  const { userId, userToken, isLoggedIn } = useSelector((state) => state.user);
-  const dispatch = useDispatch();
-
-  const { userToken:uToken =null } = localStorage.getItem('ea') ? JSON.parse(localStorage.getItem('ea')) : {};
 
   //TODO: CASE-001: Needs checking..., maybe move out off App, since loing does not need to know if the user is logged in or not
  /*useEffect(() => {

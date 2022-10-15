@@ -2,9 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { collection, query, where, getDocs, orderBy, doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
-import { getArrayFromCollection, spanishLocale } from "../../helpers";
+import { getArrayFromCollection } from "../../helpers";
 import { toast } from 'react-toastify';
-import { getAbsencesOfStudent } from "../absences/absencesSlice";
 
 const initialState = {
   loading: false,

@@ -5,7 +5,6 @@ import { getStudentInfo } from "../store/students/studentsSlice";
 import { getSubjects } from "../store/subjects/subjectsSlice";
 import { format } from "date-fns";
 import { spanishLocale, makeClassTimeHoursReadable } from "../helpers";
-import _ from "lodash";
 import Subject from "../components/Subject";
 
 const StudentInfo = () => {

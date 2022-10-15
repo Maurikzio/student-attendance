@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-// import { useAuth } from '../context/auth.context';
-import { useNavigate } from 'react-router-dom';
 import { auth, db } from "../firebase/firebaseConfig";
 import { doc, setDoc } from "firebase/firestore";
-import { createUserWithEmailAndPassword, getAuth,  } from 'firebase/auth';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 const Register = () => {
   const [userInfo, setUserInfo] = useState({
@@ -17,10 +15,6 @@ const Register = () => {
     email: "",
     password: "",
   });
-
-  const [error, setError] = useState(null);
-  // const { signUp } = useAuth();
-  const navigate = useNavigate();
 
   const handleChange = (event) => {
     const { target: { name, value }} = event;

@@ -26,10 +26,8 @@ const Select = ({ options, label, onChange, selectedOption }) => {
       {label ? <div className="text-sm font-medium text-gray-700 mb-1">{label}</div> : null }
       <Combobox value={selectedOption} by="id" onChange={handleOnChange}>
         <div className="relative">
-          {/* <div className="relative w-full cursor-default overflow-hidden rounded-md bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm"> */}
           <div className="relative w-full cursor-default bg-white text-left shadow-md sm:text-sm rounded-md">
             <Combobox.Input
-              // className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0 ring-2 ring-red-500"
               className="w-full py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 rounded-md border border-gray-300 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
               displayValue={(person) => person?.value}
               onChange={(event) => setQuery(event.target.value)}

@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getUserStudents } from '../store/students/studentsSlice';
-import { getSubjects, selectSubjects } from '../store/subjects/subjectsSlice';
-import { selectUserInfo, getUserInfo } from '../store/user/userSlice';
-import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
-import { db } from '../firebase/firebaseConfig';
+import { selectUserInfo } from '../store/user/userSlice';
 import { deleteAbsence, getAbsencesAddedByUser, getAbsencesByGrade, updateAbsenceType } from '../store/absences/absencesSlice';
-import { getArrayFromCollection, makeClassTimeHoursReadable, spanishLocale, months, gradeLetters, grades } from '../helpers';
+import { makeClassTimeHoursReadable, spanishLocale, months, gradeLetters, grades } from '../helpers';
 import Modal from '../components/Modal';
 import ReactTooltip from 'react-tooltip';
 import { differenceInBusinessDays, format, getMonth } from 'date-fns';
