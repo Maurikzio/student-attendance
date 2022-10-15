@@ -7,8 +7,8 @@ import Table from "../components/Table";
 import { createColumnHelper } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
 import OptionsPicker from "../components/OptionsPicker";
-import { gradeLetters, grades } from "../helpers";
-
+import { gradeLetters, grades, spanishLocale } from "../helpers";
+import { format } from "date-fns";
 
 const Students = () => {
   const [selectedGrade, setSelectedGrade] = useState({id: 8, value: "Octavo"});
@@ -95,6 +95,8 @@ const Students = () => {
 
   const gradeLettersForGradeSelected = gradeLetters.filter((gradeLetter) => gradeLetter.grades.includes(selectedGrade.id));
 
+  const dateForFile = format(Date.now(), "dd'-'LLLL'-'yyyy ", {locale: spanishLocale});
+
   return (
     <>
     {studentsLoading ? (
@@ -116,7 +118,7 @@ const Students = () => {
             </div>
           ) : null}
           <div className="ml-auto">
-            <DownloadCSV data={dataForTable} headers={headersForCSV} filename="students"/>
+            <DownloadCSV data={dataForTable} headers={headersForCSV} filename={`estudiantes-faltas-${dateForFile.trim()}`}/>
           </div>
         </div>
         <div className="px-[40px]">
