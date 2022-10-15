@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { addDoc, collection, doc, getDocs, updateDoc, increment, arrayUnion, where, orderBy, deleteDoc, arrayRemove, query } from "firebase/firestore";
+import { addDoc, collection, doc, getDocs, updateDoc, increment, where, orderBy, deleteDoc, deleteField } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
 import { getArrayFromCollection } from "../../helpers";
 import { toast } from 'react-toastify';
@@ -24,7 +24,8 @@ export const createAbsenceRecord = createAsyncThunk(
       const studentRef = doc(db, `students${grade}`, data.studentId);
       await updateDoc(studentRef, {
         ['absences.' + data.type]: increment(1),
-        "absences.list": arrayUnion(createdRecordRef.id)
+        ['absences.list.'+createdRecordRef.id]: {'type': data.type, id: createdRecordRef.id, subjectId: data.subjectId}
+        // "absences.list": arrayUnion(createdRecordRef.id)
       });
 
       toast.success("El nuevo registro ha sido creado", { bodyClassName: "bg-lime-50", className: "!bg-lime-50 text-white"});
@@ -81,7 +82,8 @@ export const deleteAbsence = createAsyncThunk(
       const studentRef = doc(db, `students${grade}`, studentId);
       await updateDoc(studentRef, {
         ['absences.' + absenceType]: increment(-1),
-        "absences.list": arrayRemove(absenceId)
+        // "absences.list": arrayRemove(absenceId)
+        ['absences.list.' + absenceId]: deleteField(),
       });
       dispatch(filterAbsencesList(absenceId))
       toast.success("El registro ha sido borrado", { bodyClassName: "bg-lime-50", className: "!bg-lime-50 text-white"});
@@ -111,6 +113,7 @@ export const updateAbsenceType = createAsyncThunk(
       await updateDoc(studentRef ,{
         'absences.I': increment(type === "I" ? -1 : 1),
         'absences.J': increment(type === "J" ? -1 : 1),
+        ['absences.list.'+absenceId+'.type']: typesToChange[type],
       })
       dispatch(changeAbsenceType({ absenceId, nextType: typesToChange[type]}));
       toast.success("El registro ha sido actualizado", { bodyClassName: "bg-lime-50", className: "!bg-lime-50 text-white"});

@@ -37,11 +37,11 @@ const StudentInfo = () => {
     const curr = acc.get(month) ?? [];
     acc.set(month, [...curr, currentItem])
     return acc;
-  }, new Map())
+  }, new Map());
 
   const absencesBySubject = subjectsList?.map((subject) => {
-    const absencesOfSubject = studentAbsences?.filter((absence) => absence.subjectId === subject.id);
-    return {...subject, absences: absencesOfSubject.length}
+    const unjustifiedAbsencesOfSubject = Object.values(studentInfo?.absences?.list || {}).filter((absence) => absence.subjectId === subject.id && absence.type === "I")
+    return {...subject, absences: unjustifiedAbsencesOfSubject.length}
   });
 
   return (
