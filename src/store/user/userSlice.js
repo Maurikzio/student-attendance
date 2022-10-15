@@ -3,6 +3,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { auth, db } from "../../firebase/firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
+import { toast } from "react-toastify";
 
 // const userToken = localStorage.getItem("userToken")
 //   ? localStorage.getItem("userToken")
@@ -11,6 +12,12 @@ import { doc, getDoc } from "firebase/firestore";
 // const userId = localStorage.getItem("userId")
 //   ? localStorage.getItem("userId")
 //   : null;
+
+const errors = {
+  "auth/internal-error": "Error en la autenticación",
+  "auth/user-not-found": "Usuario no registrado",
+  "auth/wrong-password": "Contraseña incorrecta",
+}
 
 const { userToken = null, userId = null } =  localStorage.getItem("ea")
   ? JSON.parse(localStorage.getItem("ea"))
@@ -28,13 +35,14 @@ const initialState = {
 
 export const loginUser = createAsyncThunk(
   'user/login',
-  async ({email, password}, /*{dispatch, getState}*/) => {
+  async ({email, password}, /*{dispatch, getState}*/ thunkAPI ) => {
     try {
       const { user } = await signInWithEmailAndPassword(auth, email, password);
       localStorage.setItem('ea', JSON.stringify({userToken: user.accessToken, userId: user.uid}));
       return {uid: user.uid, userToken: user.accessToken};
     } catch (err) {
-      throw new Error(err)
+      toast.error(errors[err.code] ?? "Ha ocurrido un error", { bodyClassName: "bg-rose-50", className: "!bg-rose-50 text-white"});
+      return thunkAPI.rejectWithValue(JSON.stringify(err));
     }
   }
 )
