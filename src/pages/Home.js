@@ -77,7 +77,7 @@ const Home = () => {
     <>
     {absencesLoading ? (
       <div className="w-full h-full flex justify-center items-center absolute top-0 left-0 bg-slate-600 bg-opacity-25 z-10 backdrop-blur-sm">
-        <div class="spinner"></div>
+        <div className="spinner"></div>
       </div>
     ) : null}
     <div className='w-full h-full text-black p-4'>
