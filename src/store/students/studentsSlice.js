@@ -56,7 +56,7 @@ export const getStudentInfo = createAsyncThunk(
       const docSnap = await getDoc(docRef);
       const studentInfo = docSnap.data();
       const res = { studentInfo, }
-      if(Object.values(studentInfo?.absences?.list || {}).length || studentInfo.absences?.list?.length) { //TODO: update after [] to {}
+      if(Object.values(studentInfo?.absences?.list || {}).length) {
         const absences = Object.keys(studentInfo?.absences?.list).map(item => getDoc(doc(db, `absences${grade}`, item)))
         const absencesList = await Promise.all(absences);
         const absencesListInfo = absencesList

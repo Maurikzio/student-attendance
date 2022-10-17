@@ -46,7 +46,7 @@ const Students = () => {
         grade,
         justified: absences.J,
         unjustified: absences.I,
-        totalAbsences: Object.values(absences?.list || {})?.length || absences?.list?.length || 0, //TODO: change after changing list from [] to {}
+        totalAbsences: Object.values(absences?.list || {})?.length,
         studentId: id,
       });
     }
