@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { addDoc, collection, doc, getDocs, updateDoc, increment, where, orderBy, deleteDoc, deleteField } from "firebase/firestore";
+import { addDoc, collection, doc, getDocs, updateDoc, increment, where, query, orderBy, deleteDoc, deleteField } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
 import { getArrayFromCollection } from "../../helpers";
 import { toast } from 'react-toastify';
@@ -44,7 +44,8 @@ export const getAbsencesAddedByUser = createAsyncThunk(
     const gradeLetter = data.replace(/[0-9]/g, "");
     try {
       const colRef = collection(db, `absences${grade}` );
-      const docsSnap = await getDocs(colRef, where("grade", "==", `${grade}${gradeLetter}`), orderBy("date", "asc"));
+      const q = query(colRef, where("grade", "==", `${grade}${gradeLetter}`), orderBy("date", "asc"));
+      const docsSnap = await getDocs(q);
       const listOfAbsences = getArrayFromCollection(docsSnap).sort((a, b) => b.date - a.date);
       return listOfAbsences;
     } catch (err) {
