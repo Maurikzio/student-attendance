@@ -115,8 +115,6 @@ const Students = () => {
 
   const gradeLettersForGradeSelected = gradeLetters.filter((gradeLetter) => gradeLetter.grades.includes(selectedGrade.id));
 
-  const dateForFile = format(Date.now(), "dd'-'LLLL'-'yyyy ", {locale: spanishLocale});
-
   return (
     <>
     {(studentsLoading || loadingSubjects) ? (
@@ -138,7 +136,7 @@ const Students = () => {
             </div>
           ) : null}
           <div className="ml-auto">
-            <DownloadCSV data={dataForTable} headers={headersForCSV} filename={`estudiantes-faltas-${dateForFile.trim()}`}/>
+            <DownloadCSV data={dataForTable} headers={headersForCSV} filename={`estudiantes-faltas}`}/>
           </div>
         </div>
         <div className="px-[40px]">

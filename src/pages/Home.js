@@ -9,6 +9,7 @@ import { differenceInBusinessDays, format, getMonth } from 'date-fns';
 import { addDays } from 'date-fns/esm';
 import { Link } from 'react-router-dom';
 import OptionsPicker from '../components/OptionsPicker';
+import DownloadCSV from '../components/DownloadCSV/DownloadCSV';
 
 const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -69,6 +70,19 @@ const Home = () => {
 
   const gradeLettersForGradeSelected = gradeLetters.filter((gradeLetter) => gradeLetter.grades.includes(selectedGrade.id));
 
+  const dataForCSV = listOfAbsences?.map(item => ({...item, date: format(item.date, "dd/MM/yyyy"), type: item.type === "I" ? "Injustificada" : "Justificada"}));
+
+  const headers = [
+    { label: "ID", key: "id" },
+    { label: "Estudiante", key: "student" },
+    { label: "Curso", key: "grade" },
+    { label: "Fecha", key: "date" },
+    { label: "Tipo", key: "type"},
+    { label: "Materia", key: "subject"},
+    { label: "Hora  de clase", key: "classTime"},
+    { label: "Motivo", key: "reason"},
+  ];
+
   return (
     <>
     {absencesLoading ? (
@@ -77,22 +91,25 @@ const Home = () => {
       </div>
     ) : null}
     <div className='w-full h-full text-black p-4'>
-      {
-        userInfo?.role === "inspector" ? (
-          <div className='flex justify-center mb-2'>
-            <div className='flex items-center justify-center gap-4 rounded-md bg-white p-2'>
-              <div>
-                <OptionsPicker options={grades} onChange={onSelectGrade} optionSelected={selectedGrade}/>
-              </div>
-              <div className='w-[190px]'>
-                <OptionsPicker options={gradeLettersForGradeSelected} onChange={(value) => setGradeLetter(value.id === gradeLetter.id ? "" : value)} optionSelected={gradeLetter}/>
+      <div className='relative'>
+      {userInfo?.role === "inspector" ? (
+        <div className='flex justify-center mb-2'>
+          <div className='flex items-center justify-center gap-4 rounded-md bg-white p-2'>
+            <div>
+              <OptionsPicker options={grades} onChange={onSelectGrade} optionSelected={selectedGrade}/>
             </div>
-            </div>
+            <div className='w-[190px]'>
+              <OptionsPicker options={gradeLettersForGradeSelected} onChange={(value) => setGradeLetter(value.id === gradeLetter.id ? "" : value)} optionSelected={gradeLetter}/>
           </div>
-        ) : (
-          <h2 className="text-3xl mb-[20px] font-bold tracking-tight text-indigo-600 col-span-2 text-center">Mis registros</h2>
-        )
-      }
+          </div>
+        </div>
+      ) : (
+        <h2 className="text-3xl mb-[20px] font-bold tracking-tight text-indigo-600 col-span-2 text-center">Mis registros</h2>
+      )}
+      <div className='absolute right-0 top-0'>
+        <DownloadCSV data={dataForCSV} headers={headers} filename={`registro`}/>
+      </div>
+    </div>
 
       <div className="grid grid-cols-2 overflow-auto h-[92%]">
         {absencesListByMonth.size > 0 ? (
