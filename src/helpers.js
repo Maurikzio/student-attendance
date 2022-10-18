@@ -56,3 +56,42 @@ export const makeClassTimeHoursReadable = (hour) => {
   };
   return `${classTimeHours[hour]} hora`
 };
+
+export const getSubjectsAlerts = (subjects = null, absences = null) => {
+  if(!subjects || !absences) {
+    return {};
+  }
+
+  const onlyIds = Object.values(absences).reduce((acc, curr) => {
+    if(curr.type === "I") {
+        acc[curr.subjectId] =  (acc[curr.subjectId] || 0) + 1;
+    }
+    return acc;
+  }, {});
+
+  const alerts = Object.entries(onlyIds).reduce((acc, curr) => {
+    const [key, value] = curr;
+    let color = "";
+    const subject = subjects.find(s => s.id === key);
+
+    const sixPercentage = (subject.totalHours * 6) / 100;
+    const eigthPercentage = (subject.totalHours * 8) / 100;
+    const tenPercentage = (subject.totalHours * 10) / 100;
+
+    if(value >= sixPercentage && value < eigthPercentage) {
+        color = "green"
+    } else if(value >= eigthPercentage && value < tenPercentage) {
+        color = "yellow";
+    }else if(value >= tenPercentage) {
+        color = "red";
+    }
+
+    if(color) {
+        acc[color] = (acc[color] || 0) + 1;
+    }
+
+    return acc;
+  }, {});
+
+return alerts;
+}

@@ -7,14 +7,17 @@ import Table from "../components/Table";
 import { createColumnHelper } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
 import OptionsPicker from "../components/OptionsPicker";
-import { gradeLetters, grades, spanishLocale } from "../helpers";
+import { getSubjectsAlerts, gradeLetters, grades, spanishLocale } from "../helpers";
 import { format } from "date-fns";
+import { getSubjects } from "../store/subjects/subjectsSlice";
 
 const Students = () => {
   const [selectedGrade, setSelectedGrade] = useState({id: 8, value: "Octavo"});
   const [gradeLetter, setGradeLetter] = useState("");
   const userInfo = useSelector(selectUserInfo);
   const {loading: studentsLoading, list: studentsList} = useSelector((state) => state.students);
+  const { loading: loadingSubjects, list: subjectsList } = useSelector((state) => state.subjects);
+
   const dispatch = useDispatch();
 
   const onSelectGrade = (grade) => {
@@ -28,6 +31,7 @@ const Students = () => {
     } else if  (userInfo?.role === "inspector" && selectedGrade) {
       dispatch(getStudentsByGrade(selectedGrade.id));
     }
+    dispatch(getSubjects())
   }, [userInfo, dispatch, selectedGrade]);
 
   const headersForCSV = [
@@ -48,6 +52,7 @@ const Students = () => {
         unjustified: absences.I,
         totalAbsences: Object.values(absences?.list || {})?.length,
         studentId: id,
+        alerts: getSubjectsAlerts(subjectsList, student?.absences?.list),
       });
     }
     return acc;
@@ -60,13 +65,28 @@ const Students = () => {
       header: "Estudiante",
       cell: info => {
         const studentInfo = info.cell.row.original;
+        const colors = {
+          yellow: "bg-yellow-400",
+          green: "bg-green-500",
+          red: "bg-red-600"
+        }
+
+        const alerts = Object.entries(studentInfo.alerts).map(([k, v]) => {
+          return (
+            colors?.[k] ? <span key={k} className={`${colors[k]} w-4 h-4 rounded-full text-center flex items-center justify-center text-sm`}>{v}</span> : null
+          )
+        });
+
         return (
-          <Link
-            className="hover:text-indigo-600"
-            to={`/estudiante/${studentInfo.grade}/${studentInfo.studentId}`}
-          >
-            {info.getValue()}
-          </Link>
+          <div className="flex items-center">
+            <Link
+              className="hover:text-indigo-600"
+              to={`/estudiante/${studentInfo.grade}/${studentInfo.studentId}`}
+            >
+              {info.getValue()}
+            </Link>
+            <div className="ml-4 flex gap-1">{alerts}</div>
+          </div>
         )
       },
       accessorKey: "student"
@@ -99,7 +119,7 @@ const Students = () => {
 
   return (
     <>
-    {studentsLoading ? (
+    {(studentsLoading || loadingSubjects) ? (
       <div className="w-full h-full flex justify-center items-center absolute top-0 left-0 bg-slate-600 bg-opacity-25 backdrop-blur-sm">
         <div className="spinner"></div>
       </div>
