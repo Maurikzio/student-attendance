@@ -14,7 +14,7 @@ const Layout = ({children }) => {
   }, [])
 
   return (
-    <div className="flex w-full min-h-full relative">
+    <div className="flex w-full min-h-full relative bg-zinc-200">
       {(loadingUser) ? (
         <div
           className="absolute left-0 top-0 w-full h-full bg-slate-100 flex justify-center items-center z-20 border"
@@ -68,7 +68,7 @@ const Layout = ({children }) => {
       </aside>
 
       {/* <div className="grow overflow-y-scroll border h-full relative"> */}
-      <div className="grow border h-screen relative">
+      <div className="grow h-screen relative">
         {children}
       </div>
     </div>

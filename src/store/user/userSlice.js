@@ -49,10 +49,11 @@ export const loginUser = createAsyncThunk(
 
 export const logoutUser = createAsyncThunk(
   'user/logout',
-  async () => {
+  async (_, { dispatch}) => {
     try {
       await signOut(auth);
       localStorage.removeItem("ea");
+      // dispatch(resetUserInfo())
     } catch (err) {
       throw new Error(err)
     }
@@ -80,6 +81,11 @@ export const userSlice = createSlice({
     setUserInfo: (state, action)  => {
       state.isLoggedIn = action.payload;
     },
+    resetUserInfo: (state, action) => {
+      state.userId = "";
+      state.userToken = "";
+      state.userInfo = null;
+    }
   },
   extraReducers(builder) {
     builder
@@ -92,7 +98,7 @@ export const userSlice = createSlice({
         state.success = true;
         state.userId = action.payload.uid;
         state.userToken = action.payload.userToken;
-        // state.isLoggedIn = true;  //TODO: for  CASE-001
+        state.isLoggedIn = true;  //TODO: for  CASE-001
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -108,7 +114,7 @@ export const userSlice = createSlice({
         state.userId = null;
         state.userToken = null;
         state.userInfo = null;
-        // state.isLoggedIn = false; //TODO: for  CASE-001
+        state.isLoggedIn = false; //TODO: for  CASE-001
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.loading = false;
@@ -146,7 +152,7 @@ export const userSlice = createSlice({
   // }
 });
 
-export const { setUserInfo } = userSlice.actions;
+export const { setUserInfo, resetUserInfo } = userSlice.actions;
 
 export const selectUserInfo = (state) => state.user.userInfo;
 

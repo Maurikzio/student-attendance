@@ -12,28 +12,10 @@ import StudentInfo from "./pages/StudentInfo";
 
 export default function App() {
 
-  //TODO: CASE-001: Needs checking..., maybe move out off App, since loing does not need to know if the user is logged in or not
- /*useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (currentUser) => {
-      console.log("token in localstorage:", uToken);
-      console.log("userToken:", userToken);
-      console.log("from onAuthStateChanged:", currentUser?.accessToken);
-      if(currentUser?.accessToken !== uToken && isLoggedIn){
-        console.log("needs logout")
-        dispatch(logoutUser());
-      } else {
-        console.log("can continue..")
-      }
-      // if(userId === currentUser?.uid && userToken !== currentUser?.accessToken) {
-      //   dispatch(logoutUser());
-      // }
-    })
-
-    return () => unsub()
-  }, [])*/
 
   return (
-    <div className="bg-[#f2f2f2] h-screen text-black flex">
+    // <div className="bg-[#f2f2f2] h-screen text-black flex">
+    <div className="bg-zinc-700 h-screen text-black flex">
         <Routes>
           <Route path='*' element={<NotFound/>} />
           <Route path="/" element={

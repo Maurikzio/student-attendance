@@ -15,7 +15,7 @@ const Subject = ({ subject, onClickSubject, selectedSubject }) => {
 
   return (
     <div className={`flex cursor-pointer w-[350px] ${selectedSubject === subject.id ? 'bg-indigo-100' : ''}`} onClick={() => onClickSubject(subject.id)}>
-      <p className="w-[300px]">{subject.subjectName}</p>
+      <p className="w-[250px]">{subject.subjectName}</p>
       <p className="flex items-center gap-2"><span className={`w-4 h-4 rounded-full ${bgClassnames}`}/> {subject.absences}</p>
     </div>
   )
