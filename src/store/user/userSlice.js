@@ -49,27 +49,28 @@ export const loginUser = createAsyncThunk(
 
 export const logoutUser = createAsyncThunk(
   'user/logout',
-  async (_, { dispatch}) => {
+  async (_, { dispatch, rejectWithValue}) => {
     try {
       await signOut(auth);
       localStorage.removeItem("ea");
       // dispatch(resetUserInfo())
     } catch (err) {
-      throw new Error(err)
+      return rejectWithValue(JSON.stringify(err));
     }
   }
 )
 
 export const getUserInfo = createAsyncThunk(
   'user/getUserInfo',
-  async (_, { getState }) => {
+  async (_, { getState, rejectWithValue }) => {
     const { user } = getState();
     try {
       const docRef = doc(db, "users", user.userId);
       const docSnap = await getDoc(docRef);
       return docSnap.data();
     } catch (err) {
-      throw new Error(err);
+      console.log("Error", err);
+      return rejectWithValue(JSON.stringify(err));
     }
   }
 )

@@ -112,7 +112,7 @@ const Home = () => {
           </div>
         </div>
       ) : (
-        <h2 className="text-3xl mb-[20px] font-bold tracking-tight text-indigo-600 col-span-2 text-center">Mis registros</h2>
+        <h2 className="text-3xl mb-[20px] font-bold tracking-tight text-indigo-600 col-span-2 text-center">Registros</h2>
       )}
       <div className='absolute right-0 top-0'>
         <DownloadCSV data={dataForCSV} headers={headers} filename={`registro`}/>
