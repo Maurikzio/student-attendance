@@ -8,6 +8,7 @@ import OptionsPicker from '../components/OptionsPicker';
 import Select from '../components/Select';
 import Toggle from '../components/Toggle';
 import { gradeLetters, grades } from '../helpers';
+import Spinner from '../components/Spinner';
 
 const NewRecord = () => {
   const [student, setStudent] = useState(null);
@@ -93,11 +94,7 @@ const NewRecord = () => {
 
   return (
     <>
-    {(loadingSubjects || loadingStudents)  ? (
-      <div className="w-full h-full flex justify-center items-center absolute top-0 left-0 bg-slate-600 bg-opacity-25 z-10 backdrop-blur-sm">
-        <div className="spinner"></div>
-      </div>
-    ) : null}
+    <Spinner isLoading={loadingSubjects || loadingStudents}/>
     <div className='w-full h-full text-black p-4 flex items-center justify-center content-center'>
       <div className='bg-white rounded-md p-10 grid grid-cols-2 gap-5'>
         <h1 className="text-3xl font-bold tracking-tight text-gray-900 col-span-2 text-center">Registrar Falta</h1>

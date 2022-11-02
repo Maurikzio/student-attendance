@@ -11,10 +11,12 @@ const Layout = ({children }) => {
   useEffect(() => {
     dispatch(getUserInfo());
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
+
+  const userGender = userInfo?.gender === "F" ? "a " : "";
 
   return (
-    <div className="flex w-full min-h-full relative">
+    <div className="flex w-full min-h-full relative bg-zinc-200">
       {(loadingUser) ? (
         <div
           className="absolute left-0 top-0 w-full h-full bg-slate-100 flex justify-center items-center z-20 border"
@@ -26,7 +28,7 @@ const Layout = ({children }) => {
         <div className="h-full w-64 py-4 px-3 bg-zinc-700 flex flex-col">
             {userInfo ? (<div className="p-2 text-white h-24">
               <h2 className="text-xl font-bold mb-2">{`${userInfo.name} ${userInfo.lastname}`}</h2>
-              <h3>{userInfo.role === "inspector" ? "Inspector" : `Tutor de ${userInfo.tutorOf}`}</h3>
+              <h3>{userInfo.role === "inspector" ? `Inspector${userGender}` : `Tutor${userGender}de ${userInfo.tutorOf}`}</h3>
             </div>) : null}
             <ul className="space-y-2 border-t border-zinc-500 pt-4">
               <li>
@@ -68,7 +70,7 @@ const Layout = ({children }) => {
       </aside>
 
       {/* <div className="grow overflow-y-scroll border h-full relative"> */}
-      <div className="grow border h-screen relative">
+      <div className="grow h-screen relative">
         {children}
       </div>
     </div>

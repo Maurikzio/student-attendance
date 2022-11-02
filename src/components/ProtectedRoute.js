@@ -10,12 +10,12 @@ const ProtectedRoute = ({ children}) => {
   const currUser =  useSelector(state => state.user);
   const dispatch = useDispatch();
 
-  const { userToken:uToken = null } = localStorage.getItem('ea') ? JSON.parse(localStorage.getItem('ea')) : {};
+  const { userToken:uToken = null, isLoggedIn } = localStorage.getItem('ea') ? JSON.parse(localStorage.getItem('ea')) : {};
 
   /* To check if the token in local is the same as the one from  onAuthStateChanged */
  useEffect(() => {
     const unsub = onAuthStateChanged(auth, (currentUser) => {
-      if(currentUser?.accessToken !== uToken){
+      if (currentUser?.accessToken !== uToken && isLoggedIn){ //TODO: test
         dispatch(logoutUser());
       }
     })

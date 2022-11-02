@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectUserInfo } from '../store/user/userSlice';
 import { deleteAbsence, getAbsencesAddedByUser, getAbsencesByGrade, updateAbsenceType } from '../store/absences/absencesSlice';
 import { makeClassTimeHoursReadable, spanishLocale, months, gradeLetters, grades } from '../helpers';
 import Modal from '../components/Modal';
@@ -10,13 +9,14 @@ import { addDays } from 'date-fns/esm';
 import { Link } from 'react-router-dom';
 import OptionsPicker from '../components/OptionsPicker';
 import DownloadCSV from '../components/DownloadCSV/DownloadCSV';
+import Spinner from '../components/Spinner';
 
 const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [absenceToDelete, setAbsenceToDelete] = useState(null);
   const [selectedGrade, setSelectedGrade] = useState({id: 8, value: "Octavo"});
   const [gradeLetter, setGradeLetter] = useState("");
-  const userInfo = useSelector(selectUserInfo);
+  const { userId, userInfo } = useSelector((state) => state.user)
   const { list: listOfAbsences, loading: absencesLoading } = useSelector((state) => state.absences);
 
   const dispatch = useDispatch();
@@ -49,6 +49,18 @@ const Home = () => {
     // dispatch(getAbsencesByGrade(grade.id))
   }
 
+  const onAbsenceTypeClick = (absence) => {
+    if(absence && userInfo) {
+      const { lastname, secondLastname, name, secondName } = userInfo;
+      dispatch(updateAbsenceType({
+        ...absence,
+        modifiedBy: `${lastname} ${secondLastname} ${name} ${secondName}`,
+        modifiedById: userId,
+        modifiedWhen: Date.now()
+      }))
+    }
+  }
+
   useEffect(() => {
     if (userInfo?.tutorOf) {
       dispatch(getAbsencesAddedByUser(userInfo.tutorOf))
@@ -62,7 +74,7 @@ const Home = () => {
     if(currAbsence.grade.includes(gradeLetter?.id || "")) {
       const month = getMonth(currAbsence.date);
       const curr = acc.get(month) ?? [];
-      const isEditable =  differenceInBusinessDays(addDays(new Date(currAbsence.date), 2), new Date()) >= 0;
+      const isEditable =  differenceInBusinessDays(addDays(new Date(currAbsence.date), 2), new Date()) >= 0 || (userInfo ? userInfo?.role === "inspector" : false);
       acc.set(month, [...curr, {...currAbsence, isEditable}]);
     }
     return acc;
@@ -85,11 +97,7 @@ const Home = () => {
 
   return (
     <>
-    {absencesLoading ? (
-      <div className="w-full h-full flex justify-center items-center absolute top-0 left-0 bg-slate-600 bg-opacity-25 z-10 backdrop-blur-sm">
-        <div className="spinner"></div>
-      </div>
-    ) : null}
+    <Spinner isLoading={absencesLoading}/>
     <div className='w-full h-full text-black p-4'>
       <div className='relative'>
       {userInfo?.role === "inspector" ? (
@@ -104,14 +112,14 @@ const Home = () => {
           </div>
         </div>
       ) : (
-        <h2 className="text-3xl mb-[20px] font-bold tracking-tight text-indigo-600 col-span-2 text-center">Mis registros</h2>
+        <h2 className="text-3xl mb-[20px] font-bold tracking-tight text-indigo-600 col-span-2 text-center">Registros</h2>
       )}
       <div className='absolute right-0 top-0'>
         <DownloadCSV data={dataForCSV} headers={headers} filename={`registro`}/>
       </div>
     </div>
 
-      <div className="grid grid-cols-2 overflow-auto h-[92%]">
+      <div className="grid grid-cols-2 overflow-auto h-[91%]">
         {absencesListByMonth.size > 0 ? (
           [...absencesListByMonth].map(([key, value]) => (
             <div className="relative col-span-2" key={key}>
@@ -129,7 +137,7 @@ const Home = () => {
                         >Eliminar</button>
                         <button
                           disabled={!absence.isEditable}
-                          onClick={() => dispatch(updateAbsenceType(absence))}
+                          onClick={() => onAbsenceTypeClick(absence)}
                           data-tip
                           data-for="absenceTypeBadge"
                           className={`${absence.type === "I" ? "text-red-700 bg-red-200" : "text-yellow-700 bg-yellow-200"} rounded-full text-xs px-1 font-bold disabled:opacity-75`}
@@ -147,8 +155,9 @@ const Home = () => {
                       <p>{makeClassTimeHoursReadable(absence.classTime)}</p> <i className='border-r '/>
                       <p>{format(absence.date, "iiii, dd LLLL yyyy", { locale: spanishLocale })}</p>
                     </div>
-                    <div className='pb-2 border-b text-sm text-gray-500'>
+                    <div className='pb-2 border-b text-sm text-gray-500 flex gap-4'>
                       <p><span className='text-indigo-400'>Reportado por:</span> {absence.createdBy}</p>
+                      {(userInfo?.role === "inspector" &&  absence.modifiedBy) ? <><i className='border-l '/> <p><span className='text-indigo-400'>Modificado por:</span> {absence.modifiedBy}</p></> : null}
                     </div>
                     <div className="text-sm text-gray-500 pt-2">
                       <p><span className='text-indigo-400'>Motivo:</span> {absence.reason}</p>

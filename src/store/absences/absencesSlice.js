@@ -14,7 +14,7 @@ const initialState = {
 
 export const createAbsenceRecord = createAsyncThunk(
   "absences/createAbsence",
-  async (data) => {
+  async (data, { rejectWithValue }) => {
     try{
       /* create the new absence record */
       const grade = data.grade.replace(/[A-Z]/g, "");
@@ -32,14 +32,14 @@ export const createAbsenceRecord = createAsyncThunk(
     } catch(err) {
       console.log("err", err);
       toast.error("El registro no ha podido ser creado", { bodyClassName: "bg-rose-50", className: "!bg-rose-50 text-white"});
-      throw new Error(err);
+      return rejectWithValue(JSON.stringify(err));
     }
   }
 );
 
 export const getAbsencesAddedByUser = createAsyncThunk(
   "absences/getAbsencesByUser",
-  async (data) => {
+  async (data, { rejectWithValue }) => {
     const grade = data.replace(/[A-Z]/g, "");
     const gradeLetter = data.replace(/[0-9]/g, "");
     try {
@@ -49,14 +49,15 @@ export const getAbsencesAddedByUser = createAsyncThunk(
       const listOfAbsences = getArrayFromCollection(docsSnap).sort((a, b) => b.date - a.date);
       return listOfAbsences;
     } catch (err) {
-      throw new Error(err);
+      toast.error("No se ha podido obtener los registros", { bodyClassName: "bg-rose-50", className: "!bg-rose-50 text-white"});
+      return rejectWithValue(JSON.stringify(err));
     }
   }
 )
 
 export const getAbsencesByGrade = createAsyncThunk(
   "absences/getAbsencesByGrade",
-  async (grade) => {
+  async (grade, { rejectWithValue }) => {
     try {
       const colRef = collection(db, `absences${grade}`);
       const docsSnap = await getDocs(colRef);
@@ -64,14 +65,14 @@ export const getAbsencesByGrade = createAsyncThunk(
       return listOfAbsences;
     } catch (err) {
       toast.error("No se ha podido obtener los registros", { bodyClassName: "bg-rose-50", className: "!bg-rose-50 text-white"});
-      return err;
+      return rejectWithValue(JSON.stringify(err));
     }
   }
 )
 
 export const deleteAbsence = createAsyncThunk(
   "absences/deleteAbsence",
-  async (data, { dispatch }) => {
+  async (data, { dispatch, rejectWithValue }) => {
     const { studentId, absenceId, absenceType, studentGrade } = data;
     const grade = studentGrade.replace(/[A-Z]/g, "");
 
@@ -89,9 +90,8 @@ export const deleteAbsence = createAsyncThunk(
       dispatch(filterAbsencesList(absenceId))
       toast.success("El registro ha sido borrado", { bodyClassName: "bg-lime-50", className: "!bg-lime-50 text-white"});
     } catch (err) {
-      console.log(err);
       toast.error("No se ha podido borrar el registro", { bodyClassName: "bg-rose-50", className: "!bg-rose-50 text-white"});
-      throw new Error(err);
+      return rejectWithValue(JSON.stringify(err));
     }
 
   }
@@ -99,15 +99,15 @@ export const deleteAbsence = createAsyncThunk(
 
 export const updateAbsenceType = createAsyncThunk(
   "absences/updateAbsenceType",
-  async (data, { dispatch }) => {
-    const { grade, id: absenceId, type, studentId } = data;
+  async (data, { dispatch, rejectWithValue }) => {
+    const { grade, id: absenceId, type, studentId, modifiedBy, modifiedById, modifiedWhen } = data;
 
     const gradeNumber = grade.replace(/[A-Z]/g, "");
     const typesToChange = {I : "J", J : "I"};
 
     try {
       const docRef = doc(db, `absences${gradeNumber}`, absenceId);
-      await updateDoc(docRef, { type:  typesToChange[type] });
+      await updateDoc(docRef, { type:  typesToChange[type], modifiedBy,  modifiedById, modifiedWhen });
 
       /* Update the student absences object */
       const studentRef = doc(db, `students${gradeNumber}`, studentId);
@@ -116,12 +116,11 @@ export const updateAbsenceType = createAsyncThunk(
         'absences.J': increment(type === "J" ? -1 : 1),
         ['absences.list.'+absenceId+'.type']: typesToChange[type],
       })
-      dispatch(changeAbsenceType({ absenceId, nextType: typesToChange[type]}));
+      dispatch(updateAbsence({ absenceId, nextType: typesToChange[type], modifiedBy }));
       toast.success("El registro ha sido actualizado", { bodyClassName: "bg-lime-50", className: "!bg-lime-50 text-white"});
     } catch (err) {
       toast.error("No se ha podido actualizar el registro", { bodyClassName: "bg-rose-50", className: "!bg-rose-50 text-white"});
-      console.log(err);
-      throw new Error(err);
+      return rejectWithValue(JSON.stringify(err));
     }
   }
 );
@@ -151,9 +150,9 @@ export const absencesSlice = createSlice({
     filterAbsencesList: (state, action) => {
       state.list = state.list.filter(item => item.id !== action.payload);
     },
-    changeAbsenceType: (state, action) => {
-      state.list = state.list.map(item => item.id === action.payload.absenceId ? {...item, type: action.payload.nextType} : item)
-    }
+    updateAbsence: (state, action) => {
+      state.list = state.list.map(item => item.id === action.payload.absenceId ? {...item, type: action.payload.nextType, modifiedBy: action.payload.modifiedBy } : item)
+    },
   },
   extraReducers(builder) {
     builder
@@ -222,6 +221,6 @@ export const absencesSlice = createSlice({
   }
 })
 
-export const { filterAbsencesList, changeAbsenceType } = absencesSlice.actions;
+export const { filterAbsencesList, updateAbsence } = absencesSlice.actions;
 
 export default absencesSlice.reducer;

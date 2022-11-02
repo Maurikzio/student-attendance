@@ -6,6 +6,7 @@ import { getSubjects } from "../store/subjects/subjectsSlice";
 import { format } from "date-fns";
 import { spanishLocale, makeClassTimeHoursReadable } from "../helpers";
 import Subject from "../components/Subject";
+import Spinner from "../components/Spinner";
 
 const StudentInfo = () => {
   const params = useParams();
@@ -46,11 +47,7 @@ const StudentInfo = () => {
 
   return (
     <>
-      {(studentsLoading || loadingSubjects) ? (
-      <div className="w-full h-full flex justify-center items-center absolute top-0 left-0 bg-slate-600 bg-opacity-25 z-10 backdrop-blur-sm">
-        <div className="spinner"></div>
-      </div>
-    ) : null}
+      <Spinner isLoading={studentsLoading || loadingSubjects}/>
       <div className="w-full h-full p-4 flex flex-col gap-4">
           <div className="p-4 bg-white rounded-md flex justify-between">
             {studentInfo ? (
@@ -69,6 +66,7 @@ const StudentInfo = () => {
             ) : null}
             {absencesBySubject.length ? (
               <div className="grow text-sm">
+                <div className="flex justify-around w-[350px] font-bold"><span className="w-[150px]">Materia</span><span>Injustificadas</span></div>
                 {absencesBySubject.map(subject => <Subject subject={subject} key={subject.id} onClickSubject={onClickSubject} selectedSubject={selectedSubject}/>)}
               </div>
             ) : null}

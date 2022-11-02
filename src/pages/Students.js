@@ -7,9 +7,9 @@ import Table from "../components/Table";
 import { createColumnHelper } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
 import OptionsPicker from "../components/OptionsPicker";
-import { getSubjectsAlerts, gradeLetters, grades, spanishLocale } from "../helpers";
-import { format } from "date-fns";
+import { getSubjectsAlerts, gradeLetters, grades } from "../helpers";
 import { getSubjects } from "../store/subjects/subjectsSlice";
+import Spinner from "../components/Spinner";
 
 const Students = () => {
   const [selectedGrade, setSelectedGrade] = useState({id: 8, value: "Octavo"});
@@ -117,11 +117,7 @@ const Students = () => {
 
   return (
     <>
-    {(studentsLoading || loadingSubjects) ? (
-      <div className="w-full h-full flex justify-center items-center absolute top-0 left-0 bg-slate-600 bg-opacity-25 backdrop-blur-sm">
-        <div className="spinner"></div>
-      </div>
-    ) : null}
+    <Spinner isLoading={studentsLoading || loadingSubjects}/>
     <div className="w-full text-black p-4 h-full max-h-full">
       <div className="bg-white rounded-md p-4 flex flex-col h-full overflow-auto">
         <div className="flex">

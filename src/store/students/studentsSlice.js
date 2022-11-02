@@ -16,7 +16,7 @@ const initialState = {
 
 export const getStudentsOfUser = createAsyncThunk(
   "students/getStudentsOfUser",
-  async (data) => {
+  async (data, { rejectWithValue }) => {
     const grade = data.replace(/[A-Z]/g, "");
     const gradeLetter = data.replace(/[0-9]/g, "");
     try {
@@ -26,14 +26,14 @@ export const getStudentsOfUser = createAsyncThunk(
       const listOfStudents = getArrayFromCollection(dataSnap);
       return listOfStudents;
     } catch (err) {
-      throw new Error(err);
+      return rejectWithValue(JSON.stringify(err));
     }
   }
 )
 
 export const getStudentsByGrade = createAsyncThunk(
   "students/getStudentByGrade",
-  async (grade) => {
+  async (grade, { rejectWithValue }) => {
     try {
       const colRef = collection(db, `students${grade}`);
       const docsSnap = await getDocs(colRef);
@@ -41,14 +41,14 @@ export const getStudentsByGrade = createAsyncThunk(
       return listOfStudents;
     } catch (err) {
       toast.error("No se ha podido obtener los estudiantes", { bodyClassName: "bg-rose-50", className: "!bg-rose-50 text-white"});
-      return err;
+      return rejectWithValue(JSON.stringify(err));
     }
   }
 )
 
 export const getStudentInfo = createAsyncThunk(
   "students/getStudentInfo",
-  async ({studentId, studentGrade}, {dispatch}) => {
+  async ({studentId, studentGrade}, { rejectWithValue }) => {
     const grade = studentGrade.replace(/[A-Z]/g, "");
 
     try {
@@ -66,9 +66,8 @@ export const getStudentInfo = createAsyncThunk(
       }
       return res;
     } catch (err) {
-      console.log("ERR", err);
       toast.error("Estudiante no encontrado", { bodyClassName: "bg-rose-50", className: "!bg-rose-50 text-white"});
-      throw new Error(err);
+      return rejectWithValue(JSON.stringify(err));
     }
 
   }
