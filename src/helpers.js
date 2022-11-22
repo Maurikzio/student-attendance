@@ -57,8 +57,8 @@ export const makeClassTimeHoursReadable = (hour) => {
   return `${classTimeHours[hour]} hora`
 };
 
-export const getSubjectsAlerts = (subjects = null, absences = null) => {
-  if(!subjects || !absences) {
+export const getSubjectsAlerts = (subjects = [], absences = {}) => {
+  if(!subjects.length || !Object.values(absences).length) {
     return {};
   }
 
