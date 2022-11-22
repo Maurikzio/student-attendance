@@ -69,7 +69,6 @@ export const getUserInfo = createAsyncThunk(
       const docSnap = await getDoc(docRef);
       return docSnap.data();
     } catch (err) {
-      console.log("Error", err);
       return rejectWithValue(JSON.stringify(err));
     }
   }
