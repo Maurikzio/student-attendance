@@ -81,6 +81,12 @@ const NewRecord = () => {
     }
   }, [userInfo, dispatch, selectedGrade]);
 
+  useEffect(() => {
+    if(student) {
+      setStudent(null);
+    }
+  }, [selectedGrade, gradeLetter])
+
   const mappedStudents = studentsList?.reduce((acc, student) => {
     if(student.grade.includes(gradeLetter?.id || "")) {
       acc.push({id: student.id, value: `${student.lastname} ${student.secondLastname} ${student.name} ${student.secondName}`, grade: student.grade});
