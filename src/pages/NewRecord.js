@@ -88,7 +88,7 @@ const NewRecord = () => {
   }, [selectedGrade, gradeLetter])
 
   const mappedStudents = studentsList?.reduce((acc, student) => {
-    if(student.grade.includes(gradeLetter?.id || "")) {
+    if(student.grade.includes(gradeLetter?.id || "") && !student?.locked) {
       acc.push({id: student.id, value: `${student.lastname} ${student.secondLastname} ${student.name} ${student.secondName}`, grade: student.grade});
     }
     return acc;

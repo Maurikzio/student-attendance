@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { collection, query, where, getDocs, orderBy, doc, getDoc } from "firebase/firestore";
+import { collection, query, where, getDocs, orderBy, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
 import { getArrayFromCollection } from "../../helpers";
 import { toast } from 'react-toastify';
@@ -73,10 +73,29 @@ export const getStudentInfo = createAsyncThunk(
   }
 )
 
+export const updateStudent = createAsyncThunk(
+  "students/updateStudent",
+  async ({ data, gradeNumber, studentId }, { dispatch, rejectWithValue }) => {
+    try {
+      const studentRef = doc(db, `students${gradeNumber}`, studentId);
+      await updateDoc( studentRef, {
+        locked: data.locked,
+      })
+      dispatch(updateStudentLock({studentId, locked: data.locked }))
+    } catch (err) {
+      rejectWithValue(JSON.stringify(err));
+    }
+  }
+)
+
 export const studentsSlice = createSlice({
   name: "students",
   initialState,
-  reducers: {},
+  reducers: {
+    updateStudentLock: (state, action) => {
+      state.list = state.list.map(item => item.id === action.payload.studentId ? {...item, locked: action.payload.locked} : item)
+    }
+  },
   extraReducers(builder) {
     builder
       .addCase(getStudentsOfUser.pending, (state, action) => {
@@ -119,7 +138,21 @@ export const studentsSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+      .addCase(updateStudent.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateStudent.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+      })
+      .addCase(updateStudent.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
   }
-})
+});
+
+export const { updateStudentLock } = studentsSlice.actions;
 
 export default studentsSlice.reducer;
