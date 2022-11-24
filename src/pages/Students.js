@@ -5,11 +5,11 @@ import { selectUserInfo } from "../store/user/userSlice";
 import DownloadCSV from "../components/DownloadCSV/DownloadCSV";
 import Table from "../components/Table";
 import { createColumnHelper } from "@tanstack/react-table";
-import { Link } from "react-router-dom";
 import OptionsPicker from "../components/OptionsPicker";
 import { getSubjectsAlerts, gradeLetters, grades } from "../helpers";
 import { getSubjects } from "../store/subjects/subjectsSlice";
 import Spinner from "../components/Spinner";
+import StudentName from "../components/StudentName";
 
 const Students = () => {
   const [selectedGrade, setSelectedGrade] = useState({id: 8, value: "Octavo"});
@@ -44,7 +44,7 @@ const Students = () => {
 
   const dataForTable = studentsList?.reduce((acc, student) => {
     if(student.grade.includes(gradeLetter?.id || "")) {
-      const {absences, grade, name, secondName, lastname, secondLastname, id} = student;
+      const {absences, grade, name, secondName, lastname, secondLastname, id, locked=false} = student;
       acc.push({
         student: `${lastname} ${secondLastname} ${name} ${secondName}`,
         grade,
@@ -53,6 +53,7 @@ const Students = () => {
         totalAbsences: Object.values(absences?.list || {})?.length,
         studentId: id,
         alerts: getSubjectsAlerts(subjectsList, student?.absences?.list),
+        locked
       });
     }
     return acc;
@@ -63,52 +64,28 @@ const Students = () => {
   const columns = [
     columnHelper.accessor('student', {
       header: "Estudiante",
-      cell: info => {
-        const studentInfo = info.cell.row.original;
-        const colors = {
-          yellow: "bg-yellow-400",
-          green: "bg-green-500",
-          red: "bg-red-600"
-        }
-
-        const alerts = Object.entries(studentInfo.alerts).map(([k, v]) => {
-          return (
-            colors?.[k] ? <span key={k} className={`${colors[k]} w-4 h-4 rounded-full text-center flex items-center justify-center text-sm`}>{v}</span> : null
-          )
-        });
-
-        return (
-          <div className="flex items-center">
-            <Link
-              className="hover:text-indigo-600"
-              to={`/estudiante/${studentInfo.grade}/${studentInfo.studentId}`}
-            >
-              {info.getValue()}
-            </Link>
-            <div className="ml-4 flex gap-1">{alerts}</div>
-          </div>
-        )
-      },
+      cell: info => <StudentName info={info}/>,
       accessorKey: "student"
     }),
     columnHelper.accessor(row => row.grade, {
       id: "grade",
-      // cell: info => <i>{info.getValue()}</i>,
       header: () => <span>Curso</span>,
+      cell: info => <div className={`${info.row.original?.locked ? 'opacity-50' : 'opacity-100'}`}>{info.renderValue()}</div>,
       enableColumnFilter: false,
     }),
     columnHelper.accessor('justified', {
       header: () => 'Justificadas',
-      cell: info => info.renderValue(),
+      cell: info => <div className={`${info.row.original?.locked ? 'opacity-50' : 'opacity-100'}`}>{info.renderValue()}</div>,
       enableColumnFilter: false,
     }),
     columnHelper.accessor('unjustified', {
       header: () => <span>Injustificadas</span>,
+      cell: info => <div className={`${info.row.original?.locked ? 'opacity-50' : 'opacity-100'}`}>{info.renderValue()}</div>,
       enableColumnFilter: false,
     }),
     columnHelper.accessor('totalAbsences', {
       header: 'Total de faltas',
-      cell: info => info.renderValue(),
+      cell: info => <div className={`${info.row.original?.locked ? 'opacity-50' : 'opacity-100'}`}>{info.renderValue()}</div>,
       enableColumnFilter: false,
     }),
   ];
