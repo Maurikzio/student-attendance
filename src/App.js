@@ -9,6 +9,7 @@ import NewRecord from "./pages/NewRecord";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import StudentInfo from "./pages/StudentInfo";
+import NewStudent from "./pages/NewStudent";
 
 export default function App() {
 
@@ -38,6 +39,11 @@ export default function App() {
               <NewRecord />
             </ProtectedRoute>
           }/>
+          {<Route path="/nuevo-estudiante" element={
+            <ProtectedRoute>
+              <NewStudent />
+            </ProtectedRoute>
+          }/>}
           <Route path="/ingresar" element={<Login/>} />
           {/* <Route path="/register" element={<Register/>} /> */}
         </Routes>
