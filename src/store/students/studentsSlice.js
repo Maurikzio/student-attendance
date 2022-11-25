@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { collection, query, where, getDocs, orderBy, doc, getDoc, updateDoc } from "firebase/firestore";
+import { collection, query, where, getDocs, orderBy, doc, getDoc, updateDoc, addDoc } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
 import { getArrayFromCollection } from "../../helpers";
 import { toast } from 'react-toastify';
@@ -88,6 +88,19 @@ export const updateStudent = createAsyncThunk(
   }
 )
 
+export const createStudent = createAsyncThunk(
+  "students/createStudent",
+  async ({ data, gradeNumber }, { rejectWithValue }) => {
+    try {
+      await addDoc(collection(db, `students${gradeNumber}`), data);
+      toast.success("El nuevo estudiante ha sido registrado", { bodyClassName: "bg-lime-50", className: "!bg-lime-50 text-white"});
+    } catch (err) {
+      toast.error("El nuevo estudiante no ha podido ser creado", { bodyClassName: "bg-rose-50", className: "!bg-rose-50 text-white"});
+      rejectWithValue(JSON.stringify(err));
+    }
+  }
+)
+
 export const studentsSlice = createSlice({
   name: "students",
   initialState,
@@ -147,6 +160,18 @@ export const studentsSlice = createSlice({
         state.success = true;
       })
       .addCase(updateStudent.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(createStudent.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createStudent.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+      })
+      .addCase(createStudent.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

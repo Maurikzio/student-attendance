@@ -15,6 +15,8 @@ const Layout = ({children }) => {
 
   const userGender = userInfo?.gender === "F" ? "a " : "";
 
+  const isInspector = userInfo?.role === "inspector";
+
   return (
     <div className="flex w-full min-h-full relative bg-zinc-200">
       {(loadingUser) ? (
@@ -28,7 +30,7 @@ const Layout = ({children }) => {
         <div className="h-full w-64 py-4 px-3 bg-zinc-700 flex flex-col">
             {userInfo ? (<div className="p-2 text-white h-24">
               <h2 className="text-xl font-bold mb-2">{`${userInfo.name} ${userInfo.lastname}`}</h2>
-              <h3>{userInfo.role === "inspector" ? `Inspector${userGender}` : `Tutor${userGender} de ${userInfo.tutorOf}`}</h3>
+              <h3>{isInspector ? `Inspector${userGender}` : `Tutor${userGender} de ${userInfo.tutorOf}`}</h3>
             </div>) : null}
             <ul className="space-y-2 border-t border-zinc-500 pt-4">
               <li>
@@ -57,6 +59,16 @@ const Layout = ({children }) => {
                   <span className="flex-1 ml-3 whitespace-nowrap">Estudiantes</span>
                 </SidebarLink>
               </li>
+              {isInspector ? (
+                <li>
+                  <SidebarLink to={"/nuevo-estudiante"}>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 transition duration-75 text-gray-400 group-hover:text-gray-900">
+                      <path d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM3.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z" />
+                    </svg>
+                    <span className="flex-1 ml-3 whitespace-nowrap">Nuevo estudiante</span>
+                  </SidebarLink>
+                </li>
+              ) : null}
             </ul>
             <div className="border-t border-zinc-500 pt-4 mt-auto">
               <button
